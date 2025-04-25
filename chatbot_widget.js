@@ -93,7 +93,7 @@
                                 transform: scale(0.5);
                                 opacity: 0;
                                 transition: all 0.2s linear;
-                                border: 1px solid #000;
+                                border: 1px solid #212121;
                                 z-index: 99999999999999999 !important;
                             }
 
