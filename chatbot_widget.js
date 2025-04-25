@@ -980,7 +980,7 @@
 
             const generateToken = async () => {
                 // const url = "https://consumerapi.modelrocket.ai/gettoken";
-                const url = "http://10.10.1.165:5000/gettoken";
+                const url = "https://aimatchmakingapi.adraproductstudio.com/gettoken";
                 const username = client_id;
                 const password = client_secret;
                 const base64Credentials = btoa(`${username}:${password}`);
@@ -1159,7 +1159,7 @@
                 }
 
                 // const url = "https://consumerapi.modelrocket.ai/chatbot_widget";
-                const url = "http://10.10.1.165:5000/chatbot_widget";
+                const url = "https://aimatchmakingapi.adraproductstudio.com/chatbot_widget";
 
                 await fetch(url, {
                     method: "POST",
