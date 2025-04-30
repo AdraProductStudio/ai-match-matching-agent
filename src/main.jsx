@@ -5,13 +5,10 @@ import App from './App.jsx'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import 'react-toastify/dist/ReactToastify.css';
-import { DataProvider } from './hooks/CommonContext.jsx';
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <DataProvider>
       <App />
-    </DataProvider>
-  </StrictMode>
+  </StrictMode>,
 )
