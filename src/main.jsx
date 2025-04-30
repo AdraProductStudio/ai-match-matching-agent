@@ -9,7 +9,9 @@ import { DataProvider } from './hooks/CommonContext.jsx';
 
 
 createRoot(document.getElementById('root')).render(
-  <DataProvider>
-    <App />
-  </DataProvider>
+  <StrictMode>
+    <DataProvider>
+      <App />
+    </DataProvider>
+  </StrictMode>
 )
