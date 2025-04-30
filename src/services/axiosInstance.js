@@ -1,7 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-console.log("import.meta.env.VITE_DOMAIN",import.meta.env.VITE_DOMAIN)
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_REACT_APP_API_URL,
@@ -11,10 +10,8 @@ const axiosInstance = axios.create({
     },
 });
 
-// ✅ Intercept all requests and attach the access token if available
 axiosInstance.interceptors.request.use((config) => {
     const token = Cookies.get("accessToken");
-    console.log("req token", token)
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,13 +24,10 @@ axiosInstance.interceptors.request.use((config) => {
 }, (error) => Promise.reject(error));
 
 
-// ✅ Handle 401 errors and refresh token if needed
 axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
-
-        console.log("error.response.status", error.response)
 
         if (error.response && error.response.status === 401) {
             originalRequest._retry = true;
@@ -48,7 +42,6 @@ axiosInstance.interceptors.response.use(
 
                 if (response.data && response.data.data.token) {
                     const newAccessToken = response.data.data.token;
-                    Cookies.set("accessToken", newAccessToken);
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                     return axiosInstance(originalRequest);
                 } else {

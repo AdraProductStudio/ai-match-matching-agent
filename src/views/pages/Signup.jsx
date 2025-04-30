@@ -185,10 +185,7 @@ const Signup = () => {
         "allowed_domain": import.meta.env.VITE_DOMAIN
       };
 
-      console.log(payload)
-
       const response = await axiosInstance.post('/signup', payload);
-      console.log("response.data", response.data)
       if (response.data.error_code === 200) {
         navigate("/");
         toast.success(response.data.message);
@@ -345,76 +342,3 @@ const Signup = () => {
 
 export default Signup
 
-
-
-
-// const handleBlur = (name) => {
-//   switch (name) {
-//     case "username":
-//       if (!signupInputs?.username?.trim()) {
-//         setError((prevState) => (
-//           { ...prevState, usernameError: true }
-//         ))
-//         setErrorMessage((prevState) => (
-//           { ...prevState, usernameErrorMessage: "Username should not be empty" }
-//         ))
-//       }
-
-//       break;
-//     case "password":
-//       if (!signupInputs?.password?.trim()) {
-//         setError((prevState) => (
-//           { ...prevState, passwordError: true }
-//         ))
-//         setErrorMessage((prevState) => (
-//           { ...prevState, passwordErrorMessage: "Password should not be empty" }
-//         ))
-//       }
-//       else if (!validatePassword(signupInputs?.password)) {
-//         setError((prevState) => (
-//           { ...prevState, passwordError: true }
-//         ))
-//         setErrorMessage((prevState) => (
-//           { ...prevState, passwordErrorMessage: "Password must be at least 8 characters & contain at least one uppercase & one special character", }
-//         ))
-//       }
-//       else {
-//         setError((prevState) => (
-//           { ...prevState, passwordError: false }
-//         ))
-//         setErrorMessage((prevState) => (
-//           { ...prevState, passwordErrorMessage: "" }
-//         ))
-//       }
-//       break;
-//     case "confirmPassword":
-//       if (!signupInputs?.confirmPassword?.trim()) {
-//         setError((prevState) => (
-//           { ...prevState, confirmPasswordError: true }
-//         ))
-//         setErrorMessage((prevState) => (
-//           { ...prevState, confirmPasswordErrorMessage: "Confirm password should not be empty" }
-//         ))
-//       }
-//       else if (!validateConfirmPassword(signupInputs?.confirmPassword, signupInputs?.password)) {
-//         setError((prevState) => (
-//           { ...prevState, confirmPasswordError: true }
-//         ))
-//         setErrorMessage((prevState) => (
-//           { ...prevState, confirmPasswordErrorMessage: "Confirm passwords should match with password" }
-//         ))
-//       }
-//       else {
-//         setError((prevState) => (
-//           { ...prevState, confirmPasswordError: false }
-//         ))
-//         setErrorMessage((prevState) => (
-//           { ...prevState, confirmPasswordErrorMessage: "" }
-//         ))
-//       }
-//       break;
-//     default:
-//       console.log("default")
-//       break;
-//   }
-// }

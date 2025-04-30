@@ -50,7 +50,6 @@ const ChatPage = () => {
             timeouts.current.forEach(clearTimeout);
             timeouts.current = [];
 
-            console.log("response.data", response.data)
             if (response.data.error_code === 200) {
                 const responseMessage = response.data.data.message;
                 const botMessage = { text: responseMessage, user: false, time: currentTime(new Date()) };
