@@ -1,0 +1,249 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+* {
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
+}
+
+:root {
+  --vh-height: 100vh;
+  --custom-blue: #007bff;
+  --custom-grey: #eff0f6;
+  --custom-grey2: #747474;
+  --custom-button-bg: #2a5597;
+  --custom-button-hover: rgb(5, 43, 96);
+  --custom-primary: #1859ff;
+  --custom-success: #259a54;
+}
+
+@font-face {
+  font-family: "BespokeStencil-Variable";
+  src: url(../src/assets/BespokeStencil_Complete/Fonts/WEB/fonts/BespokeStencil-Variable.ttf);
+}
+
+iframe {
+  width: 100%;
+  height: 500px;
+  border: none;
+}
+
+.main-text {
+  font-family: "Inter", sans-serif !important;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: auto;
+  -ms-overflow-style: none;
+}
+
+.fs-14 {
+  font-size: 14px;
+}
+
+input[type='password']::placeholder,
+input[type='text']::placeholder,
+input[type='number']::placeholder {
+  color: rgb(153, 153, 153);
+}
+
+.layout {
+  height: calc(var(--vh-height));
+}
+
+.header-section {
+  height: calc(var(--vh-height) - 92vh) !important;
+  background-color: #0f0f0f;
+}
+
+.footer-section {
+  height: calc(var(--vh-height) - 94vh) !important;
+  background-color: #0f0f0f;
+}
+
+.footer-section .footer-text {
+  color: #757474;
+}
+
+.footer-section .footer-link-text {
+  color: #b0b0b0;
+  transition: all 0.5;
+}
+
+.footer-section .footer-link-text:hover {
+  color: #dfdfdf;
+}
+
+.main-section {
+  height: calc(var(--vh-height) - 14vh) !important;
+  /* overflow-y: scroll; */
+  background-color: #000;
+}
+
+.login-container {
+  background-color: #0f0f0f;
+}
+
+.signup-container {
+  background-color: #0f0f0f;
+  overflow-y: scroll;
+  height: 90%;
+}
+
+.main-section .card-title {
+  margin-bottom: 2.063rem;
+  font-family: "Inter", serif;
+  font-size: 1rem !important;
+  color: var(--custom-grey2);
+}
+
+.main-section .form-label {
+  font-family: "Inter", sans-serif !important;
+  color: #fff;
+}
+
+.main-section .register-login-option-text {
+  font-family: "Inter", sans-serif !important;
+  color: #f4f4f4;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.w-20 {
+  width: 20%;
+}
+
+.text12 {
+  font-size: 12px;
+}
+
+.eye-icon {
+  font-size: 18px !important;
+}
+
+.cup {
+  cursor: pointer;
+}
+
+.signup-login-navigation-link {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn.custom-button {
+  background-color: var(--custom-button-bg);
+  color: #fff;
+  width: 12rem;
+  height: 2.813rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.btn.custom-button-sm {
+  background-color: var(--custom-button-bg);
+  color: #fff;
+  width: 12rem;
+  padding: 0.3rem;
+  width: 100%;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.btn.logout-button {
+  background-color: var(--custom-button-bg);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.btn.generate-new-pdf-button {
+  background-color: var(--custom-button-bg);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.btn.custom-button:hover,
+.btn.custom-button-sm:hover,
+.btn.logout-button:hover,
+.btn.generate-new-pdf-button:hover {
+  background-color: var(--custom-button-hover);
+  color: #fff;
+}
+
+.btn-custom-primary {
+  color: var(--custom-primary);
+}
+
+.react-tel-input .form-control {
+  width: 100% !important;
+  border: none;
+  border-radius: 8px !important;
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  /* border: 10px solid grey !important; */
+  /* background-color: red; */
+  border: 1px solid #fff !important;
+  background-color: white !important;
+}
+
+.react-tel-input .form-control:hover {
+  width: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  border-radius: 8px !important;
+  border: 1px solid grey !important;
+  border: 1px solid #ccc !important;
+  background-color: white !important;
+}
+
+.react-tel-input {
+  width: 100% !important;
+  border: 1px solid grey !important;
+  border-radius: 0 !important;
+  border-radius: 8px !important;
+  border: 1px solid #ccc !important;
+  background-color: white !important;
+}
+
+.react-tel-input .form-control:focus {
+  width: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  border-radius: 8px !important;
+  border: 1px solid grey !important;
+  border: 1px solid #ccc !important;
+  background-color: white !important;
+}
+
+@media (max-width: 576px) {
+
+  .btn.generate-new-pdf-button,
+  .call-now-button {
+    width: 100% !important;
+  }
+
+  .main-text{
+    font-size: 2.3rem;
+  }
+}
