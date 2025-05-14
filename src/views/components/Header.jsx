@@ -11,8 +11,6 @@ import Cookies from 'js-cookie';
 
 
 
-
-
 const Header = ({ currentPage }) => {
     const navigate = useNavigate()
 
@@ -43,13 +41,13 @@ const Header = ({ currentPage }) => {
             <Navbar className="header-section" >
                 <Container>
                     <Navbar.Brand >
-                        <img 
+                        <img
                             className='cup'
-                            style={{marginLeft:'-30px'}}
-                             src={Image.adraWhiteLogo} 
-                             alt="adra-white-logo"
-                              width={120} 
-                              onClick={handleLogoClick} />
+                            style={{ marginLeft: '-30px' }}
+                            src={Image.adraWhiteLogo}
+                            alt="adra-white-logo"
+                            width={120}
+                            onClick={handleLogoClick} />
                     </Navbar.Brand>
                     <Navbar.Toggle />
                     {
@@ -69,30 +67,7 @@ const Header = ({ currentPage }) => {
                                 </Navbar.Collapse>
                             </div>
                             :
-                            currentPage === "UpdateInformation" ?
-                                <div className='d-flex justify-content-end gap-2'>
-                                    <Navbar.Collapse className="">
-                                        <CustomButton
-                                            buttonName={
-                                                isMobileScreen ?
-                                                    <AiFillHome />
-                                                    :
-                                                    "Back to home"
-                                            }
-                                            className='px-3 btn logout-button'
-                                            onClick={() => navigate("/home")}
-                                        />
-                                    </Navbar.Collapse>
-                                    <Navbar.Collapse className="">
-                                        <CustomButton
-                                            buttonName="Log out"
-                                            className='px-3 btn logout-button'
-                                            onClick={handleLogout}
-                                        />
-                                    </Navbar.Collapse>
-                                </div>
-                                :
-                                null
+                            null
                     }
 
 

@@ -1,7 +1,5 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import '../../stylesheets/ChatPage.css'
-import { Link, useLocation } from 'react-router-dom'
-import Modal from 'react-bootstrap/Modal';
 import Header from '../components/Header'
 import { Container } from 'react-bootstrap';
 import Footer from '../components/Footer';
@@ -34,7 +32,7 @@ const ChatPage = () => {
                 setMessages((prevMessages) => [...prevMessages, userMessage]);
                 setUserInputMessage("");
 
-                const loadingText = { text: "Loading...", user: false, time: currentTime(new Date()) };
+                const loadingText = { text: null, user: false, time: currentTime(new Date()), isLoading: true };
                 setMessages((prevMessages) => [...prevMessages, loadingText]);
 
                 setTimeout(() => {
@@ -68,7 +66,7 @@ const ChatPage = () => {
                 const responseMessage = response.data.data.response;
                 const formattedHTML = responseMessage
                     .split("\n\n")
-                    .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`) // Replace single \n with <br>
+                    .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
                     .join("");
 
                 const botMessage = { text: formattedHTML, user: false, time: currentTime(new Date()) };
@@ -83,7 +81,7 @@ const ChatPage = () => {
                     }
                 }, 1);
             } else {
-                const responseMessage = response.data.message;
+                const responseMessage = response.data.data.message;
                 const botMessage = { text: responseMessage, user: false, time: currentTime(new Date()) };
                 setMessages((prevMessages) => [
                     ...prevMessages.slice(0, -1),
@@ -164,72 +162,28 @@ const ChatPage = () => {
                                                 <>
                                                     <div className="sending-message-container">
                                                         <div className="mb-0 sending-message">
-                                                            {Array.isArray(message.url) ? (
-                                                                message.url.map((url, idx) => (
-                                                                    <img
-                                                                        key={idx}
-                                                                        src={url}
-                                                                        alt={`selected-media-file-${idx}`}
-                                                                        width="100%"
-                                                                        height="150"
-                                                                    />
-                                                                ))
-                                                            ) : message.url ? (
-                                                                <img
-                                                                    src={message.url}
-                                                                    alt="selected-media-file"
-                                                                    width="100%"
-                                                                    height="150"
-                                                                />
-                                                            ) : (
-                                                                message.text
-                                                            )}
+                                                            {message.text}
                                                         </div>
                                                         <p className="mb-0 sending-message-time">{message?.time}</p>
                                                     </div>
                                                 </>
                                             ) : (
                                                 <div className="receiving-message-container" key={index}>
-                                                    {Array.isArray(message.text) ? (
-                                                        message.text.map((item, idx) => (
-                                                            <div className="default-receiving-suggestions-container" key={idx}>
-                                                                <p
-                                                                    className="mb-0 cup default-receiving-suggestion"
-                                                                    onClick={() => handleSendMessage(item, "suggestionResponseText")}
-                                                                >
-                                                                    {item}
-                                                                </p>
+                                                    <div className="mb-0 receiving-message">
+                                                        {message.isLoading ? (
+                                                            <div className="dots-loader">
+                                                                <span></span>
+                                                                <span></span>
+                                                                <span></span>
                                                             </div>
-                                                        ))
-                                                    ) : (
-                                                        <>
-                                                            <div className="mb-0 receiving-message">
-                                                                {Array.isArray(message.url) ? (
-                                                                    message.url.map((url, idx) => (
-                                                                        <img
-                                                                            key={idx}
-                                                                            src={url}
-                                                                            alt={`received-media-file-${idx}`}
-                                                                            width="150"
-                                                                            height="150"
-                                                                        />
-                                                                    ))
-                                                                ) : message.url ? (
-                                                                    <img
-                                                                        src={message.url}
-                                                                        alt="received-media-file"
-                                                                        width="150"
-                                                                        height="150"
-                                                                    />
-                                                                ) : (
-                                                                    <p
-                                                                        className="mb-0 recommendation-text"
-                                                                        dangerouslySetInnerHTML={{ __html: message.text }}
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                        </>
-                                                    )}
+                                                        ) : (
+                                                            <p
+                                                                className="mb-0 recommendation-text"
+                                                                dangerouslySetInnerHTML={{ __html: message.text }}
+                                                            />
+                                                        )}
+
+                                                    </div>
                                                     <p className="mb-0 receiving-message-time">{message?.time}</p>
                                                 </div>
                                             )}

@@ -87,21 +87,40 @@ const Login = () => {
     try {
       setLoading(true)
 
+      // const phoneNumber = `+91${loginInputs.phoneNumber}`;
+      // const password = sha256(loginInputs?.password?.trim());
+
+      // const encodedAuth = btoa(`${phoneNumber}:${password}`);
+      // const basicAuth = "Basic " + encodedAuth;
+
+      // const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/login`, {
+      //   headers: {
+      //     Authorization: basicAuth,
+      //     domain: import.meta.env.VITE_DOMAIN        },
+      // });
+
+      // Cookies.set("phone_number", `+91${loginInputs.phoneNumber}`)
+
       const phoneNumber = `+91${loginInputs.phoneNumber}`;
       const password = sha256(loginInputs?.password?.trim());
-
+      const payload = {
+        "password": sha256(loginInputs?.password?.trim()),
+        "phone_number": phoneNumber,
+      };
       const encodedAuth = btoa(`${phoneNumber}:${password}`);
       const basicAuth = "Basic " + encodedAuth;
 
-      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/login`, {
+
+      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/login`, payload, {
         headers: {
           Authorization: basicAuth,
-          domain: import.meta.env.VITE_DOMAIN        },
+          domain: import.meta.env.VITE_DOMAIN
+        },
       });
 
-      Cookies.set("phone_number", `+91${loginInputs.phoneNumber}`)
 
       if (response.data.error_code === 200) {
+        Cookies.set("phone_number", `+91${loginInputs.phoneNumber}`)
         setLoading(false)
         Cookies.set("accessToken", response.data.data.token)
         navigate('/chat')
