@@ -10,6 +10,7 @@ import Cookies from 'js-cookie';
 const ChatPage = () => {
 
     const [messages, setMessages] = useState([])
+    const [loading, setLoading] = useState(false)
     const [userInputMessage, setUserInputMessage] = useState("");
     const timeouts = useRef([]);
 
@@ -19,8 +20,10 @@ const ChatPage = () => {
 
     const handleSendMessage = async (text, value, flag) => {
         try {
-            let payload;
+            document.getElementById('chat-textarea-field').blur()
+            setLoading(true)
 
+            let payload;
             payload = {
                 "msg": text,
                 "flag": flag,
@@ -41,6 +44,16 @@ const ChatPage = () => {
                         scrollView.scrollIntoView({ behavior: 'smooth' });
                     }
                 }, 1);
+            } else {
+                const loadingText = { message: null, user: false, time: currentTime(new Date()), isLoading: true };
+                setMessages((prevMessages) => [...prevMessages, loadingText]);
+
+                setTimeout(() => {
+                    const scrollView = document.querySelector("#scrollView");
+                    if (scrollView) {
+                        scrollView.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 1);
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
@@ -49,6 +62,8 @@ const ChatPage = () => {
             timeouts.current = [];
 
             if (response.data.error_code === 200) {
+                document.getElementById('chat-textarea-field').focus()
+                setLoading(false)
                 const responseMessage = response.data.data.message;
                 const botMessage = { text: responseMessage, user: false, time: currentTime(new Date()) };
                 setMessages((prevMessages) => [
@@ -63,6 +78,8 @@ const ChatPage = () => {
                 }, 1);
 
             } else if (response.data.status_code === 201) {
+                setLoading(false)
+                document.getElementById('chat-textarea-field').focus()
                 const responseMessage = response.data.data.response;
                 const formattedHTML = responseMessage
                     .split("\n\n")
@@ -81,6 +98,8 @@ const ChatPage = () => {
                     }
                 }, 1);
             } else {
+                document.getElementById('chat-textarea-field').focus()
+                setLoading(false)
                 const responseMessage = response.data.data.message;
                 const botMessage = { text: responseMessage, user: false, time: currentTime(new Date()) };
                 setMessages((prevMessages) => [
@@ -95,6 +114,8 @@ const ChatPage = () => {
                 }, 1);
             }
         } catch (error) {
+            document.getElementById('chat-textarea-field').focus()
+            setLoading(false)
             console.log(error)
         }
     }
@@ -199,8 +220,10 @@ const ChatPage = () => {
                             <div className='chat-textarea-container d-flex align-items-center '>
                                 <div className='position-relative w-100  d-flex align-items-center'>
                                     <textarea
+                                        style={{ cursor: loading === true ? 'not-allowed' : 'default', backgroundColor: loading ? '#ccc' : '#fff' }}
                                         autoFocus
-                                        className='chat-textarea-field '
+                                        id='chat-textarea-field'
+                                        className='chat-textarea-field'
                                         type="text"
                                         placeholder='Type here..'
                                         value={userInputMessage}
