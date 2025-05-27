@@ -55,11 +55,15 @@ const Signup = () => {
 
   const handleSignupInputs = (e) => {
     const { name, value } = e.target
+    const maxLengths = {
+      phoneNumber: 10
+    };
+    if (maxLengths[name] && value.length > maxLengths[name]) return;
+
     setSignupInputs((prevState) => (
       { ...prevState, [name]: value }
     ))
 
-    // Remove error messages dynamically when user starts typing
     if (value.trim() !== "") {
       setError((prevState) => (
         { ...prevState, [`${name}Error`]: false }
@@ -92,90 +96,75 @@ const Signup = () => {
     return minLengthCheck && uppercaseCheck && specialCharCheck;
   };
 
-  const validateConfirmPassword = (confirmPassword, password) => {
-    return confirmPassword === password;
-  };
-
 
   const handleSignup = async () => {
     let hasError = false;
 
-    if (!signupInputs?.firstName?.trim()) {
-      setError((prevState) => ({ ...prevState, firstNameError: true }));
-      setErrorMessage((prevState) => ({ ...prevState, firstNameErrorMessage: "First name should not be empty" }));
-      hasError = true;
-    }
-    if (!signupInputs?.lastName?.trim()) {
-      setError((prevState) => ({ ...prevState, lastNameError: true }));
-      setErrorMessage((prevState) => ({ ...prevState, lastNameErrorMessage: "Last name should not be empty" }));
-      hasError = true;
-    }
-    if (!signupInputs?.email?.trim()) {
-      setError((prevState) => ({ ...prevState, emailError: true }));
-      setErrorMessage((prevState) => ({ ...prevState, emailErrorMessage: "Email should not be empty" }));
-      hasError = true;
-    }
-    if (signupInputs?.email?.trim()) {
-      if (!validateEmail(signupInputs?.email)) {
-        setError((prevState) => (
-          { ...prevState, emailError: true }
-        ))
-        setErrorMessage((prevState) => (
-          { ...prevState, emailErrorMessage: "Please enter valid email", }
-        ))
-        hasError = true;
-      }
-    }
-    if (!signupInputs?.phoneNumber?.trim()) {
-      setError((prevState) => ({ ...prevState, phoneNumberError: true }));
-      setErrorMessage((prevState) => ({ ...prevState, phoneNumberErrorMessage: "Phone number should not be empty" }));
+    const firstName = signupInputs?.firstName?.trim() || "";
+    const lastName = signupInputs?.lastName?.trim() || "";
+    const email = signupInputs?.email?.trim() || "";
+    const phone = signupInputs?.phoneNumber?.trim() || "";
+    const password = signupInputs?.password?.trim() || "";
+    const confirmPassword = signupInputs?.confirmPassword?.trim() || "";
+
+    if (!firstName) {
+      setError(prev => ({ ...prev, firstNameError: true }));
+      setErrorMessage(prev => ({ ...prev, firstNameErrorMessage: "First name should not be empty" }));
       hasError = true;
     }
 
-    if (!signupInputs?.password?.trim()) {
-      setError((prevState) => ({ ...prevState, passwordError: true }));
-      setErrorMessage((prevState) => ({ ...prevState, passwordErrorMessage: "Password should not be empty" }));
+    if (!lastName) {
+      setError(prev => ({ ...prev, lastNameError: true }));
+      setErrorMessage(prev => ({ ...prev, lastNameErrorMessage: "Last name should not be empty" }));
       hasError = true;
     }
 
-    if (signupInputs?.password) {
-      if (!validatePassword(signupInputs?.password)) {
-        setError((prevState) => (
-          { ...prevState, passwordError: true }
-        ))
-        setErrorMessage((prevState) => (
-          { ...prevState, passwordErrorMessage: "Password must be at least 8 characters & contain at least one uppercase & one special character", }
-        ))
-        hasError = true;
-      }
-    }
-
-    if (!signupInputs?.confirmPassword?.trim()) {
-      setError((prevState) => ({ ...prevState, confirmPasswordError: true }));
-      setErrorMessage((prevState) => ({ ...prevState, confirmPasswordErrorMessage: "Confirm password should not be empty" }));
+    if (!email) {
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Email should not be empty" }));
+      hasError = true;
+    } else if (!validateEmail(email)) {
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please enter a valid email" }));
       hasError = true;
     }
 
-    if (signupInputs?.confirmPassword?.trim()) {
-      if (!validateConfirmPassword(signupInputs?.confirmPassword, signupInputs?.password)) {
-        setError((prevState) => (
-          { ...prevState, confirmPasswordError: true }
-        ))
-        setErrorMessage((prevState) => (
-          { ...prevState, confirmPasswordErrorMessage: "Confirm passwords should match with password" }
-        ))
-        hasError = true;
-      }
+    if (!phone) {
+      setError(prev => ({ ...prev, phoneNumberError: true }));
+      setErrorMessage(prev => ({ ...prev, phoneNumberErrorMessage: "Phone number should not be empty" }));
+      hasError = true;
+    } else if (!/^\d{10}$/.test(phone)) {
+      setError(prev => ({ ...prev, phoneNumberError: true }));
+      setErrorMessage(prev => ({ ...prev, phoneNumberErrorMessage: "Phone number should be 10 digits" }));
+      hasError = true;
     }
 
+    if (!password) {
+      setError(prev => ({ ...prev, passwordError: true }));
+      setErrorMessage(prev => ({ ...prev, passwordErrorMessage: "Password should not be empty" }));
+      hasError = true;
+    } else if (!validatePassword(password)) {
+      setError(prev => ({ ...prev, passwordError: true }));
+      setErrorMessage(prev => ({ ...prev, passwordErrorMessage: "Password must be at least 8 characters & contain at least one uppercase & one special character" }));
+      hasError = true;
+    }
+
+    if (!confirmPassword) {
+      setError(prev => ({ ...prev, confirmPasswordError: true }));
+      setErrorMessage(prev => ({ ...prev, confirmPasswordErrorMessage: "Confirm password should not be empty" }));
+      hasError = true;
+    } else if (confirmPassword !== password) {
+      setError(prev => ({ ...prev, confirmPasswordError: true }));
+      setErrorMessage(prev => ({ ...prev, confirmPasswordErrorMessage: "Confirm password should match the password" }));
+      hasError = true;
+    }
 
     if (hasError) {
-      console.error("Validation failed: Fields cannot be empty");
+      console.error("Validation failed: Fields cannot be empty or invalid");
       return;
     }
 
     try {
-
       const payload = {
         "firstname": signupInputs?.firstName?.trim(),
         "lastname": signupInputs?.lastName?.trim(),

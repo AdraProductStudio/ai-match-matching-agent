@@ -46,6 +46,12 @@ const Login = () => {
 
   const handleLoginInputs = (e) => {
     const { name, value } = e.target
+    const maxLengths = {
+      phoneNumber: 10
+    };
+
+    if (maxLengths[name] && value.length > maxLengths[name]) return;
+
     setLoginInputs((prevState) => (
       { ...prevState, [name]: value }
     ))
@@ -59,12 +65,15 @@ const Login = () => {
         { ...prevState, [`${name}ErrorMessage`]: "" }
       ));
     }
-
   }
 
 
   const handleLogin = async () => {
     let hasError = false;
+
+    if (loginInputs?.phoneNumber && loginInputs?.phoneNumber?.length < 10) {
+      setErrorMessage(prevState => ({ ...prevState, phoneNumberErrorMessage: "Phone number should not be less than 10 digits" }));
+    }
 
     if (!loginInputs?.phoneNumber?.trim()) {
       setError(prevState => ({ ...prevState, phoneNumberError: true }));
