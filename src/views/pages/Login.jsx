@@ -183,8 +183,8 @@ const Login = () => {
                 onClick={handleLogin}
               />
               <p className='mt-4 text-center register-login-option-text fs-14'>
-                Don't have an account?
-                <Link to="/register" className='signup-login-navigation-link'> Register</Link>
+                Don't have an account? &nbsp;
+                <Link to="/register" className='signup-login-navigation-link'>Register</Link>
               </p>
             </Col>
           </Row>

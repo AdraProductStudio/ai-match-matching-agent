@@ -5,120 +5,195 @@ import { Container } from 'react-bootstrap';
 import Footer from '../components/Footer';
 import axiosInstance from '../../services/axiosInstance';
 import Cookies from 'js-cookie';
+import Modal from 'react-bootstrap/Modal';
+import CustomButton from '../../reusable-components/CustomButton';
+import CustomSpinner from '../../reusable-components/CustomSpinner';
+import { RiLogoutBoxLine } from "react-icons/ri";
+import { useNavigate } from 'react-router-dom';
+
 
 
 const ChatPage = () => {
 
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(false)
+    const [logoutLoading, setLogoutLoading] = useState(false)
     const [userInputMessage, setUserInputMessage] = useState("");
     const timeouts = useRef([]);
+    let loopTimeoutRef = useRef(null);
+    const scrollViewRef = useRef(null);
+    const [newChatModal, setNewChatModal] = useState(false)
+    const navigate = useNavigate()
+
+
+
+    useEffect(() => {
+        const handleBeforeUnload = async (event) => {
+            let payload;
+            payload = {
+                "msg": "",
+                "flag": "close",
+                "phone_number": Cookies.get("phone_number")
+            }
+
+            const response = await axiosInstance.post("/chatbot_widget", payload);
+            console.log("response.data", response.data)
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, []);
+
+
+
+    // Scroll to bottom when messages update
+    useEffect(() => {
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);
+
+    useEffect(() => {
+        if (!loading) {
+            const textarea = document.getElementById('chat-textarea-field');
+            if (textarea) textarea.focus();
+        }
+    }, [loading]);
+
 
     useEffect(() => {
         handleSendMessage("", "", "init")
+        setNewChatModal(false)
     }, [])
 
     const handleSendMessage = async (text, value, flag) => {
         try {
-            document.getElementById('chat-textarea-field').blur()
-            setLoading(true)
+            document.getElementById('chat-textarea-field').blur();
 
-            let payload;
-            payload = {
-                "msg": text,
-                "flag": flag,
-                "phone_number": Cookies.get("phone_number")
-            }
-
-            if (flag !== "init") {
-                const userMessage = { text: text, user: true, time: currentTime(new Date()) };
-                setMessages((prevMessages) => [...prevMessages, userMessage]);
-                setUserInputMessage("");
-
-                const loadingText = { text: null, user: false, time: currentTime(new Date()), isLoading: true };
-                setMessages((prevMessages) => [...prevMessages, loadingText]);
-
-                setTimeout(() => {
-                    const scrollView = document.querySelector("#scrollView");
-                    if (scrollView) {
-                        scrollView.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }, 1);
-            } else {
-                const loadingText = { message: null, user: false, time: currentTime(new Date()), isLoading: true };
-                setMessages((prevMessages) => [...prevMessages, loadingText]);
-
-                setTimeout(() => {
-                    const scrollView = document.querySelector("#scrollView");
-                    if (scrollView) {
-                        scrollView.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }, 1);
-            }
-
-            const response = await axiosInstance.post("/chatbot_widget", payload);
+            const payload = {
+                msg: text,
+                flag: flag,
+                phone_number: Cookies.get("phone_number")
+            };
 
             timeouts.current.forEach(clearTimeout);
             timeouts.current = [];
 
-            if (response.data.error_code === 200) {
-                document.getElementById('chat-textarea-field').focus()
-                setLoading(false)
-                const responseMessage = response.data.data.message;
-                const botMessage = { text: responseMessage, user: false, time: currentTime(new Date()) };
-                setMessages((prevMessages) => [
-                    ...prevMessages.slice(0, -1),
-                    botMessage,
-                ]);
-                setTimeout(() => {
-                    const scrollView = document.querySelector("#scrollView");
-                    if (scrollView) {
-                        scrollView.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }, 1);
+            const isPollingStepEmpty = flag === "step" && text === "";
 
-            } else if (response.data.status_code === 201) {
-                setLoading(false)
-                document.getElementById('chat-textarea-field').focus()
-                const responseMessage = response.data.data.response;
-                const formattedHTML = responseMessage
-                    .split("\n\n")
-                    .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
-                    .join("");
+            if (flag === "init") {
+                setMessages([{ text: "Loading...", user: false, time: currentTime(new Date()), isLoading: true }]);
+            } else if (!isPollingStepEmpty) {
+                if (text !== "") {
+                    setMessages(prev => [...prev, { text: text, user: true, time: currentTime(new Date()) }]);
+                }
+                setMessages(prev => [...prev, { text: null, user: false, time: currentTime(new Date()), isLoading: true }]);
+            }
 
-                const botMessage = { text: formattedHTML, user: false, time: currentTime(new Date()) };
-                setMessages((prevMessages) => [
-                    ...prevMessages.slice(0, -1),
-                    botMessage,
-                ]);
-                setTimeout(() => {
-                    const scrollView = document.querySelector("#scrollView");
-                    if (scrollView) {
-                        scrollView.scrollIntoView({ behavior: 'smooth' });
+            await new Promise(resolve => setTimeout(resolve, 50));  // 50ms delay
+
+
+            if (text !== "" || flag === "init") {
+                document.getElementById('chat-textarea-field').blur()
+                setLoading(true);
+                setUserInputMessage("");
+            }
+
+            const response = await axiosInstance.post("/chatbot_widget", payload);
+            const data = response?.data;
+            const responseMessage = data?.data?.message;
+            const isEmptyData = data?.error_code === 200 && Object.keys(data?.data || {}).length === 0;
+
+            setLoading(false);
+            document.getElementById('chat-textarea-field').focus();
+
+            const updateBotMessage = (botMessage) => {
+                setMessages(prev => {
+                    if (flag === "init") {
+                        return [botMessage];
                     }
-                }, 1);
+                    if (prev.length && prev[prev.length - 1]?.isLoading) {
+                        return [...prev.slice(0, -1), botMessage];
+                    }
+                    return [...prev, botMessage];
+                });
+            };
+
+            if (data?.error_code === 200) {
+                if (!isEmptyData && responseMessage) {
+                    updateBotMessage({ text: responseMessage, user: false, time: currentTime(new Date()) });
+                } else {
+                    if (!(flag === "step" && text === "" && isEmptyData)) {
+                        setMessages(prev => prev.slice(0, -1));
+                    }
+                }
+
+                if (responseMessage === "Your chat has been closed.") {
+                    clearTimeout(loopTimeoutRef);
+                    loopTimeoutRef = null;
+                    setNewChatModal(true)
+                    return;
+                }
+
+                if (flag === "init" || (flag === "step" && text === "")) {
+                    resetIdleTracking("continuous");
+                }
+                return responseMessage;
+            }
+            else if (data?.error_code === 201) {
+                if (responseMessage && responseMessage.trim() !== "") {
+                    updateBotMessage({ text: responseMessage, user: false, time: currentTime(new Date()) });
+                } else {
+                    setMessages(prev => prev.slice(0, -1));
+                }
+
+                if (responseMessage === "Your chat has been closed.") {
+                    setNewChatModal(true)
+                    clearTimeout(loopTimeoutRef);
+                    loopTimeoutRef = null;
+                    return;
+                }
             } else {
-                document.getElementById('chat-textarea-field').focus()
-                setLoading(false)
-                const responseMessage = response.data.data.message;
-                const botMessage = { text: responseMessage, user: false, time: currentTime(new Date()) };
-                setMessages((prevMessages) => [
-                    ...prevMessages.slice(0, -1),
-                    botMessage,
-                ]);
-                setTimeout(() => {
-                    const scrollView = document.querySelector("#scrollView");
-                    if (scrollView) {
-                        scrollView.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }, 1);
+                updateBotMessage({ text: data?.data?.message || "Unexpected error occurred.", user: false, time: currentTime(new Date()) });
             }
         } catch (error) {
-            document.getElementById('chat-textarea-field').focus()
-            setLoading(false)
-            console.log(error)
+            setLoading(false);
+            document.getElementById('chat-textarea-field').focus();
+            console.error(error);
         }
-    }
+    };
+
+
+    const resetIdleTracking = (mode) => {
+        if (loopTimeoutRef) {
+            clearTimeout(loopTimeoutRef);
+            loopTimeoutRef = null;
+        }
+
+        if (mode === "close") {
+            startIdleTracking("close");
+        } else {
+            startIdleTracking("continuous");
+        }
+    };
+
+    const startIdleTracking = (mode) => {
+        if (mode === "close") {
+            setUserInputMessage("");
+            return;
+        }
+
+        loopTimeoutRef = setTimeout(async () => {
+            const response = await handleSendMessage("", "", "step");
+            if (response && typeof response === "string" && response.trim() !== "") {
+                resetIdleTracking("continuous");
+            }
+        }, 10000);
+    };
+
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
@@ -139,6 +214,13 @@ const ChatPage = () => {
         minutes = minutes < 10 ? `0${minutes}` : minutes
         const time = `${hours}:${minutes} ${ampm}`
         return time
+    }
+
+
+    const handleLogout = async () => {
+        navigate("/");
+        Cookies.remove("accessToken")
+        Cookies.remove("phone_number")
     }
 
     return (
@@ -175,44 +257,35 @@ const ChatPage = () => {
 
                         {/* Sending-Receiving messages-container */}
                         <div className='sending-receiving-message-container'>
-                            {
-                                messages?.map((message, index) => {
-                                    return (
-                                        <React.Fragment key={index}>
-                                            {message?.user === true ? (
-                                                <>
-                                                    <div className="sending-message-container">
-                                                        <div className="mb-0 sending-message">
-                                                            {message.text}
-                                                        </div>
-                                                        <p className="mb-0 sending-message-time">{message?.time}</p>
+                            {messages?.map((message, index) => (
+                                <React.Fragment key={index}>
+                                    {message?.user === true ? (
+                                        <div className="sending-message-container">
+                                            <div className="mb-0 sending-message">{message.text}</div>
+                                            <p className="mb-0 sending-message-time">{message?.time}</p>
+                                        </div>
+                                    ) : (
+                                        <div className="receiving-message-container" key={index}>
+                                            <div className="mb-0 receiving-message">
+                                                {message.isLoading ? (
+                                                    <div className="dots-loader">
+                                                        <span></span>
+                                                        <span></span>
+                                                        <span></span>
                                                     </div>
-                                                </>
-                                            ) : (
-                                                <div className="receiving-message-container" key={index}>
-                                                    <div className="mb-0 receiving-message">
-                                                        {message.isLoading ? (
-                                                            <div className="dots-loader">
-                                                                <span></span>
-                                                                <span></span>
-                                                                <span></span>
-                                                            </div>
-                                                        ) : (
-                                                            <p
-                                                                className="mb-0 recommendation-text"
-                                                                dangerouslySetInnerHTML={{ __html: message.text }}
-                                                            />
-                                                        )}
-
-                                                    </div>
-                                                    <p className="mb-0 receiving-message-time">{message?.time}</p>
-                                                </div>
-                                            )}
-                                        </React.Fragment>
-                                    );
-                                })
-                            }
-                            <div id="scrollView"></div>
+                                                ) : (
+                                                    <p
+                                                        className="mb-0 recommendation-text"
+                                                        dangerouslySetInnerHTML={{ __html: message.text }}
+                                                    />
+                                                )}
+                                            </div>
+                                            <p className="mb-0 receiving-message-time">{message?.time}</p>
+                                        </div>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                            <div id="scrollView" ref={scrollViewRef}></div>
                         </div>
 
                         {/* Text area field */}
@@ -220,15 +293,18 @@ const ChatPage = () => {
                             <div className='chat-textarea-container d-flex align-items-center '>
                                 <div className='position-relative w-100  d-flex align-items-center'>
                                     <textarea
-                                        style={{ cursor: loading === true ? 'not-allowed' : 'default', backgroundColor: loading ? '#ccc' : '#fff' }}
-                                        autoFocus
+                                        disabled={loading}
+                                        autoFocus={!loading}
                                         id='chat-textarea-field'
                                         className='chat-textarea-field'
-                                        type="text"
                                         placeholder='Type here..'
                                         value={userInputMessage}
                                         onChange={(e) => setUserInputMessage(e.target.value)}
                                         onKeyDown={handleKeyDown}
+                                        style={{
+                                            cursor: loading ? 'not-allowed' : 'text',
+                                            backgroundColor: loading ? '#ccc' : '#fff',
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -250,6 +326,61 @@ const ChatPage = () => {
             </Container >
 
             <Footer isFooterText={true} />
+
+            <Modal
+                show={newChatModal}
+                onHide={() => setNewChatModal(false)}
+                size="md"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                backdrop="static"
+            >
+                <Modal.Body >
+                    <h3 className='my-3 mb-4 text-center ' style={{ color: '#5b719b' }}>Inactive Session Notice</h3>
+                    <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: '16px' }}>
+                        The previous session has timed out due to inactivity. Kindly initiate a new conversation to proceed.
+                    </p>
+
+
+                    <div className="mx-2 my-3 text-center">
+                        <CustomButton
+                            buttonName="Start New Conversation"
+                            className={`px-3 mt-4 w-50 btn logout-button mx-auto d-block mb-4 ${logoutLoading ? 'pe-none opacity-50' : ""}`}
+                            onClick={() => {
+                                handleSendMessage("", "", "init");
+                                setNewChatModal(false);
+                            }}
+                            style={{ backgroundColor: '#04285f' }}
+                        />
+
+                        {/* OR Separator */}
+                        <div className="d-flex align-items-center justify-content-center my-3">
+                            <hr className="flex-grow-1" />
+                            <span className="mx-3 text-muted">OR</span>
+                            <hr className="flex-grow-1" />
+                        </div>
+
+                        <CustomButton
+                            buttonName={
+                                logoutLoading ? (
+                                    <CustomSpinner variant="light" size="sm" />
+                                ) : (
+                                    <>
+                                        <RiLogoutBoxLine size={18} className='me-2' />
+                                        <span>Log out</span>
+                                    </>
+                                )
+                            }
+                            className={`px-3 py-1 btn mx-auto logout-button d-flex justify-content-center align-items-center px-4 ${logoutLoading ? "pe-none opacity-50" : ""
+                                }`}
+                            onClick={handleLogout}
+
+                        />
+                    </div>
+
+                </Modal.Body>
+            </Modal>
+
 
         </section>
     )

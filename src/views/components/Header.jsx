@@ -8,12 +8,15 @@ import { AiFillHome } from "react-icons/ai";
 import Modal from 'react-bootstrap/Modal';
 import { RiLogoutBoxLine } from "react-icons/ri";
 import Cookies from 'js-cookie';
+import axiosInstance from '../../services/axiosInstance';
+import CustomSpinner from '../../reusable-components/CustomSpinner';
 
 
 
 const Header = ({ currentPage }) => {
     const navigate = useNavigate()
 
+    const [loading, setLoading] = useState(false)
     const [isMobileScreen, setIsMobileScreen] = useState(window.innerWidth < 768);
     const [modalShow, setModalShow] = useState(false);
 
@@ -24,16 +27,54 @@ const Header = ({ currentPage }) => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const handleLogout = () => {
-        Cookies.remove("accessToken")
-        Cookies.remove("phone_number")
-        navigate("/");
+    const handleLogout = async () => {
+        try {
+            setLoading(true)
+            let payload;
+            payload = {
+                "msg": "",
+                "flag": "close",
+                "phone_number": Cookies.get("phone_number")
+            }
+
+            const response = await axiosInstance.post("/chatbot_widget", payload);
+            console.log("response.data", response.data)
+            if (response.data.error_code === 200) {
+                setLoading(false)
+                navigate("/");
+                Cookies.remove("accessToken")
+                Cookies.remove("phone_number")
+            } else {
+                setLoading(false)
+                console.log(response.data.message)
+            }
+        } catch (error) {
+            setLoading(false)
+            console.log(error)
+        }
     }
 
-    const handleLogoClick = () => {
-        Cookies.remove("accessToken")
-        Cookies.remove("phone_number")
-        navigate("/");
+    const handleLogoClick = async () => {
+        try {
+            let payload;
+            payload = {
+                "msg": "",
+                "flag": "close",
+                "phone_number": Cookies.get("phone_number")
+            }
+
+            const response = await axiosInstance.post("/chatbot_widget", payload);
+            console.log("response.data", response.data)
+            if (response.data.error_code === 200) {
+                Cookies.remove("accessToken")
+                Cookies.remove("phone_number")
+                navigate("/");
+            } else {
+                console.log(response.data.message)
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -42,12 +83,12 @@ const Header = ({ currentPage }) => {
                 <Container>
                     <Navbar.Brand >
                         <img
-                            className='cup'
+                            className={window.location.pathname === "/" ? '' : 'cup'}
                             style={{ marginLeft: '-30px' }}
                             src={Image.adraWhiteLogo}
                             alt="adra-white-logo"
                             width={120}
-                            onClick={handleLogoClick} />
+                            onClick={window.location.pathname === "/" ? null : handleLogoClick} />
                     </Navbar.Brand>
                     <Navbar.Toggle />
                     {
@@ -56,10 +97,12 @@ const Header = ({ currentPage }) => {
                                 <Navbar.Collapse className="">
                                     <CustomButton
                                         buttonName={
-                                            <div className='d-flex align-items-center gap-2'>
-                                                <RiLogoutBoxLine size={18} />
-                                                <span>Log out</span>
-                                            </div>
+                                            loading ?
+                                                <CustomSpinner variant="light" size="sm" /> :
+                                                <div className={`d-flex align-items-center gap-2 ${loading && 'pe-none opacity-50'}`}>
+                                                    <RiLogoutBoxLine size={18} />
+                                                    <span>Log out</span>
+                                                </div>
                                         }
                                         className='px-3 btn logout-button'
                                         onClick={handleLogout}

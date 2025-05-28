@@ -146,8 +146,15 @@ input[type="number"] {
 }
 
 .signup-login-navigation-link {
-  font-weight: 600;
+  color: #3d89fc;
+  font-size: 15.2px;
   text-decoration: none;
+  transition: all 0.2s;
+}
+
+.signup-login-navigation-link:hover {
+  color: #1271fe;
+  text-decoration: underline;
 }
 
 .btn.custom-button {
@@ -243,7 +250,7 @@ input[type="number"] {
     width: 100% !important;
   }
 
-  .main-text{
+  .main-text {
     font-size: 2.3rem;
   }
 }

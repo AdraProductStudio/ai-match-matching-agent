@@ -315,8 +315,8 @@ const Signup = () => {
                 onClick={handleSignup}
               />
               <p className='mt-4 text-center register-login-option-text fs-14'>
-                Already have an account?
-                <Link to="/" className='signup-login-navigation-link'> Log in</Link>
+                Already have an account? &nbsp;
+                <Link to="/" className='signup-login-navigation-link'>Log in</Link>
               </p>
             </Col>
           </Row>
