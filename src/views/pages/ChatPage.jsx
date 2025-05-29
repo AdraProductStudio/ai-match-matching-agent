@@ -191,7 +191,7 @@ const ChatPage = () => {
             if (response && typeof response === "string" && response.trim() !== "") {
                 resetIdleTracking("continuous");
             }
-        }, 10000);
+        }, 60000);
     };
 
 
