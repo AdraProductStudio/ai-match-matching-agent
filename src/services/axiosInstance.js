@@ -42,6 +42,7 @@ axiosInstance.interceptors.response.use(
 
                 if (response.data && response.data.data.token) {
                     const newAccessToken = response.data.data.token;
+                    Cookies.set("accessToken",newAccessToken)
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                     return axiosInstance(originalRequest);
                 } else {
