@@ -84,7 +84,9 @@ const ChatPage = () => {
 
     const handleSendMessage = async (text, value, flag) => {
         try {
-            document.getElementById('chat-textarea-field').blur();
+            if(flag === "init" || (flag==="step" && text !=="")){
+                document.getElementById('chat-textarea-field').blur();
+            }
 
             const payload = {
                 msg: text,
@@ -110,7 +112,7 @@ const ChatPage = () => {
 
 
             if (text !== "" || flag === "init") {
-                document.getElementById('chat-textarea-field').blur()
+                // document.getElementById('chat-textarea-field').blur()
                 setLoading(true);
                 setUserInputMessage("");
             }
@@ -128,15 +130,6 @@ const ChatPage = () => {
             const updateBotMessage = (botMessage) => {
                 setMessages(prev => {
                     if (flag === "init") {
-                        // if (document.getElementById('chat-textarea-field')) {
-                        //     if (window.innerWidth > 490) {
-                        //         document.getElementById('chat-textarea-field').style.pointerEvents = 'all'
-                        //         document.getElementById('chat-textarea-field').focus();
-                        //     } else {
-                        //         document.getElementById('chat-textarea-field').blur();
-                        //         document.getElementById('chat-textarea-field').style.pointerEvents = 'all'
-                        //     }
-                        // }
                         return [botMessage];
                     }
                     if (prev.length && prev[prev.length - 1]?.isLoading) {
