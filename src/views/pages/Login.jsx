@@ -111,9 +111,9 @@ const Login = () => {
 
       if (response.data.error_code === 200) {
         Cookies.set("phone_number", `+91${loginInputs.phoneNumber}`)
-        setLoading(false)
         Cookies.set("accessToken", response.data.data.token)
         navigate('/chat')
+        setLoading(false)
       } else {
         setLoading(false)
         toast.warn(response.data.message);
@@ -134,11 +134,19 @@ const Login = () => {
   return (
     <section className='layout'>
       <Header />
+      <div className="left-purple-ball">
+      </div>
+      <div className="left-dark-ball">
+      </div>
+      <div className="right-purple-ball">
+      </div>
+      <div className="right-dark-ball">
+      </div>
       <Container className='main-section' fluid >
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
-          <Row className="login-container px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
+          <Row className="login-container align-items-center  px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
             <Col className='my-5 '>
-              <h3 className='mb-5 text-center main-text'>Login</h3>
+              <h3 className='mb-5 text-center login-register-text'>Log In</h3>
 
               <div className="mb-3">
                 <CustomInput
@@ -150,7 +158,7 @@ const Login = () => {
                   placeholder="Enter phone number"
                   onChange={handleLoginInputs}
                   value={loginInputs?.phoneNumber || ""}
-                  className="mb-2"
+                  className="mb-2 "
                 />
                 {
                   error.phoneNumberError &&
@@ -178,11 +186,11 @@ const Login = () => {
                 }
               </div>
               <CustomButton
-                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Log in"}
-                className={`btn custom-button-sm mt-5 mx-auto d-block w-100 cup py-2 ${loading && 'pe-none opacity-50'}`}
+                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Login"}
+                className={`btn custom-button mt-5 mx-auto d-block w-100 cup ${loading && 'pe-none opacity-50'}`}
                 onClick={handleLogin}
               />
-              <p className='mt-4 text-center register-login-option-text fs-14'>
+              <p className='mt-5 text-center register-login-option-text fs-14'>
                 Don't have an account? &nbsp;
                 <Link to="/register" className='signup-login-navigation-link'>Register</Link>
               </p>
@@ -191,7 +199,7 @@ const Login = () => {
         </Container>
       </Container >
 
-      <Footer isFooterText={true} />
+      {/* <Footer isFooterText={true} /> */}
 
     </section>
   )

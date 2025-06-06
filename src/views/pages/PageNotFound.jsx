@@ -24,7 +24,7 @@ const PageNotFound = () => {
                     />
                 </div>
             </Container >
-            <Footer isFooterText={true} />
+            {/* <Footer isFooterText={true} /> */}
         </section>
     )
 }

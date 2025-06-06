@@ -192,11 +192,19 @@ const Signup = () => {
   return (
     <section className='layout'>
       <Header />
+      <div className="left-purple-ball">
+      </div>
+      <div className="left-dark-ball">
+      </div>
+      <div className="right-purple-ball">
+      </div>
+      <div className="right-dark-ball">
+      </div>
       <Container className='main-section' fluid >
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
-          <Row className="signup-container px-3 px-md-5 py-3 rounded-3 col-12 col-md-8 col-lg-8 col-xl-8 " >
+          <Row className="signup-container align-items-center px-3 px-md-5 py-3 rounded-3 col-12 col-md-8 col-lg-8 col-xl-8 " >
             <Col className='my-5 '>
-              <h3 className='mb-5 text-center main-text'>Register</h3>
+              <h3 className='mb-5 text-center login-register-text'>Register</h3>
               <div className="row">
                 <div className="mb-3 col-12 col-xl-6">
                   <CustomInput
@@ -311,19 +319,19 @@ const Signup = () => {
 
               <CustomButton
                 buttonName="Register"
-                className="btn custom-button-sm mt-5 mx-auto d-block w-100 py-2"
+                className="btn custom-button mt-5 mx-auto d-block w-100 "
                 onClick={handleSignup}
               />
-              <p className='mt-4 text-center register-login-option-text fs-14'>
+              <p className='mt-5 text-center register-login-option-text fs-14'>
                 Already have an account? &nbsp;
-                <Link to="/" className='signup-login-navigation-link'>Log in</Link>
+                <Link to="/" className='signup-login-navigation-link'>Login</Link>
               </p>
             </Col>
           </Row>
         </Container>
       </Container >
 
-      <Footer isFooterText={true} />
+      {/* <Footer isFooterText={true} /> */}
 
     </section>
   )

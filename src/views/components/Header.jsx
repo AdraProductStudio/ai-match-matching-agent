@@ -17,12 +17,15 @@ const Header = ({ currentPage }) => {
     const navigate = useNavigate()
 
     const [loading, setLoading] = useState(false)
-    const [isMobileScreen, setIsMobileScreen] = useState(window.innerWidth < 768);
-    const [modalShow, setModalShow] = useState(false);
+    const [isMobileScreen, setIsMobileScreen] = useState(window.innerWidth < 576);
+    const [logoutModal, setLogoutModal] = useState(false)
+    const [logoutLoading, setLogoutLoading] = useState(false)
+
+
 
 
     useEffect(() => {
-        const handleResize = () => setIsMobileScreen(window.innerWidth < 768);
+        const handleResize = () => setIsMobileScreen(window.innerWidth < 576);
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
@@ -38,9 +41,9 @@ const Header = ({ currentPage }) => {
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
-            console.log("response.data", response.data)
             if (response.data.error_code === 200) {
                 setLoading(false)
+                setLogoutModal(false);
                 navigate("/");
                 Cookies.remove("accessToken")
                 Cookies.remove("phone_number")
@@ -84,8 +87,7 @@ const Header = ({ currentPage }) => {
                     <Navbar.Brand >
                         <img
                             className={window.location.pathname === "/" ? '' : 'cup'}
-                            style={{ marginLeft: '-30px' }}
-                            src={Image.adraWhiteLogo}
+                            src={Image.aiAgentLogo}
                             alt="adra-white-logo"
                             width={120}
                             onClick={window.location.pathname === "/" ? null : handleLogoClick} />
@@ -97,15 +99,24 @@ const Header = ({ currentPage }) => {
                                 <Navbar.Collapse className="">
                                     <CustomButton
                                         buttonName={
-                                            loading ?
-                                                <CustomSpinner variant="light" size="sm" /> :
-                                                <div className={`d-flex align-items-center gap-2 ${loading && 'pe-none opacity-50'}`}>
-                                                    <RiLogoutBoxLine size={18} />
-                                                    <span>Log out</span>
-                                                </div>
+
+                                            <div className={`d-flex align-items-center gap-2 ${loading && 'pe-none opacity-50'}`}>
+                                                {
+                                                    isMobileScreen ?
+                                                        <RiLogoutBoxLine size={18} />
+                                                        :
+                                                        <>
+                                                            <RiLogoutBoxLine size={18} />
+                                                            <span>Logout</span>
+                                                        </>
+                                                }
+
+                                            </div>
+
+
                                         }
                                         className='px-3 btn logout-button'
-                                        onClick={handleLogout}
+                                        onClick={() => setLogoutModal(true)}
                                     />
                                 </Navbar.Collapse>
                             </div>
@@ -117,61 +128,48 @@ const Header = ({ currentPage }) => {
                 </Container>
             </Navbar>
 
-
-            {/* Instructions Modal */}
+            {/* Logout Modal */}
             <Modal
-                show={modalShow}
-                onHide={() => setModalShow(false)}
-                size="lg"
+                show={logoutModal}
+                onHide={() => setLogoutModal(false)}
+                size="md"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
                 backdrop="static"
             >
                 <Modal.Body >
-
-                    <h3 className='my-3 mb-4 text-center ' style={{ color: '#5b719b' }}>Digiform – Forms Made Easy. Just Talk, We Fill!</h3>
-
-                    <p className='px-2' style={{ fontWeight: '450', fontSize: '16px' }}>
-                        DigiForm is an AI-powered automated form-filling solution that securely retrieves user data via DigiLocker and completes missing details through an interactive voice agent.
+                    <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Log out</h3>
+                    <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: '16px' }}>
+                        Are you sure you want to log out?
                     </p>
 
-                    <div className='px-2 px-md-5' style={{ color: '#666', fontSize: '15px' }}>
-                        Step 1: Sign up and Form selection
-                        Sign-up and log-in into the Application
-                        On the home screen, select the desired bank form (SBI, ICICI, or Bank of Baroda).
-                        Click on the "Use" button to proceed.
-                        <br />   <br />
 
-                        Step 2: Authenticate via DigiLocker
-                        The application integrates with DigiLocker to fetch your Aadhaar-based personal information securely.
-                        Enter your Aadhaar Number and click "Next".
-                        Follow the DigiLocker authentication steps to grant access to your details.
-                        Once authenticated, the system will autofill the form using the retrieved information.
-                        <br />   <br />
-
-                        Step 3: Complete Additional Questions via Voice Agent
-                        After the basic form details are fetched, additional details may be required.
-                        Enter your mobile number, and click "Call Now" to receive a call from the voice agent.
-                        Choose a language (English or Hindi) for the interaction.
-                        The voice agent will ask you the remaining required questions and automatically update the form.
-                        <br />   <br />
-
-                        Step 4: Generate Final PDF
-                        Once the call is completed and all details are collected, click "Generate New PDF" to create an updated version of the form with all information filled in.
-                        <p>Download or print the finalized document for submission.</p>
-
-                    </div>
-
-                    <div className="mx-2 my-3">
+                    <div className="mx-2 my-3 text-center d-flex gap-3">
                         <CustomButton
-                            buttonName="Close"
-                            className='px-3 mt-2 w-100 btn logout-button'
-                            onClick={() => setModalShow(false)}
+                            buttonName="Cancel"
+                            className={`px-3 mt-4 w-50 btn cancel-button mx-auto d-block mb-4 ${logoutLoading ? 'pe-none opacity-50' : ""}`}
+                            onClick={() => {
+                                setLogoutModal(false);
+                            }}
                         />
+                        <CustomButton
+                            buttonName={
+                                loading ?
+                                    <CustomSpinner variant="light" size="sm" /> :
+                                    "Logout"
+                            }
+                            className={`px-3 mt-4 w-50 btn logout-button mx-auto d-block mb-4 ${logoutLoading ? 'pe-none opacity-50' : ""}`}
+                            onClick={() => {
+                                handleLogout();
+                            }}
+                        />
+
                     </div>
 
                 </Modal.Body>
             </Modal>
+
+
         </>
     )
 }
