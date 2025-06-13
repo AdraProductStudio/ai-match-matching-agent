@@ -53,7 +53,7 @@ const Header = ({ currentPage }) => {
             }
         } catch (error) {
             setLoading(false)
-            console.log(error)
+            console.log(error.message)
         }
     }
 
@@ -67,7 +67,6 @@ const Header = ({ currentPage }) => {
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
-            console.log("response.data", response.data)
             if (response.data.error_code === 200) {
                 Cookies.remove("accessToken")
                 Cookies.remove("phone_number")
@@ -89,7 +88,7 @@ const Header = ({ currentPage }) => {
                             className={window.location.pathname === "/" ? '' : 'cup'}
                             src={Image.vibeonLogo}
                             alt="vibeon-logo"
-                            width={120}
+                            width={window.innerWidth < 576 ? 100 : 120}
                             onClick={window.location.pathname === "/" ? null : handleLogoClick} />
                     </Navbar.Brand>
                     <Navbar.Toggle />
@@ -103,7 +102,7 @@ const Header = ({ currentPage }) => {
                                             <div className={`d-flex align-items-center gap-2 ${loading && 'pe-none opacity-50'}`}>
                                                 {
                                                     isMobileScreen ?
-                                                        <RiLogoutBoxLine size={18} />
+                                                        <RiLogoutBoxLine size={16} />
                                                         :
                                                         <>
                                                             <RiLogoutBoxLine size={18} />
@@ -112,10 +111,8 @@ const Header = ({ currentPage }) => {
                                                 }
 
                                             </div>
-
-
                                         }
-                                        className='px-3 btn logout-button'
+                                        className={`px-3 btn logout-button ${isMobileScreen ? "logout-button-mobile" : ""}`}
                                         onClick={() => setLogoutModal(true)}
                                     />
                                 </Navbar.Collapse>

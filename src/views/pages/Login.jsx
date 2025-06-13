@@ -41,7 +41,6 @@ const Login = () => {
         setShowPassword(!showPassword)
         break;
       default:
-        console.log("default")
         break;
     }
   }
@@ -109,6 +108,7 @@ const Login = () => {
           Authorization: basicAuth,
           domain: import.meta.env.VITE_DOMAIN,
         },
+        withCredentials: true
       });
 
       if (response.data.error_code === 200) {
@@ -134,11 +134,9 @@ const Login = () => {
   };
 
   const handleAuth = async () => {
-    console.log("handleAuth")
     try {
       const payload = {}
       const response = await axiosInstance.post('/oauth', payload);
-      console.log(response.data);
       if (response.data.error_code === 200) {
         toast.success(response.data.message);
       } else if (response.data.error_code === 409) {
@@ -171,9 +169,9 @@ const Login = () => {
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
           <Row className="login-container align-items-center  px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
             <Col className='my-5 '>
-              <h3 className='mb-5 text-center login-register-text'>Log In</h3>
+              <h3 className='mb-5 text-center login-register-text '>Log In</h3>
 
-              <div className="mb-3">
+              <div className="mb-4">
                 <CustomInput
                   inputLabel="Phone number"
                   autoFocus={true}
@@ -215,7 +213,7 @@ const Login = () => {
                 }
               </div>
 
-              <div className="mb-3">
+              <div className="mb-4">
                 <CustomInputGroup
                   inputLabel="Password"
                   type={showPassword ? "text" : "password"}
@@ -234,6 +232,11 @@ const Login = () => {
                   <p className="text-danger">{errorMessage.passwordErrorMessage}</p>
                 }
               </div>
+
+              <p className='mt-2 text-end register-login-option-text fs-14'>
+                <Link to="/forgot-password" className='text-light fs-14 text-decoration-none'>Forgot password?</Link>
+              </p>
+
               <CustomButton
                 buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Login"}
                 className={`btn custom-button mt-5 mx-auto d-block w-100 cup ${loading && 'pe-none opacity-50'}`}

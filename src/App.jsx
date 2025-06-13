@@ -6,6 +6,8 @@ import ProtectedRoute from './views/routes/ProtectedRoute'
 import { ToastContainer } from "react-toastify";
 import PageNotFound from './views/pages/PageNotFound'
 import ChatPage from './views/pages/ChatPage'
+import ForgotPassword from './views/pages/ForgotPassword';
+import ResetPassword from './views/pages/ResetPassword';
 
 
 
@@ -24,6 +26,8 @@ function App() {
         <Routes>
           <Route index path='/' element={<Login />} />
           <Route path='/register' element={<Signup />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset_password' element={<ResetPassword />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/chat" element={<ChatPage />} />

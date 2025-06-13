@@ -226,7 +226,6 @@ const Signup = () => {
                 <div className="mb-3 col-12 col-xl-6">
                   <CustomInput
                     inputLabel="Last name"
-                    autoFocus={true}
                     type="text"
                     id="lastName"
                     name="lastName"
@@ -245,7 +244,6 @@ const Signup = () => {
                 <div className="mb-3 col-12 col-xl-6">
                   <CustomInput
                     inputLabel="Email"
-                    autoFocus={true}
                     type="email"
                     id="email"
                     name="email"
@@ -262,7 +260,6 @@ const Signup = () => {
                 <div className="mb-3 col-12 col-xl-6">
                   <CustomInput
                     inputLabel="Phone number"
-                    autoFocus={true}
                     type="number"
                     id="phoneNumber"
                     name="phoneNumber"

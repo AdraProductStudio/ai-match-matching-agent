@@ -44,7 +44,6 @@ const ChatPage = () => {
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
-            console.log("response.data", response.data)
         };
 
         window.addEventListener("beforeunload", handleBeforeUnload);
