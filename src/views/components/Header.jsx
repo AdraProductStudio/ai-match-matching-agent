@@ -112,7 +112,7 @@ const Header = ({ currentPage }) => {
 
                                             </div>
                                         }
-                                        className={`px-3 btn logout-button ${isMobileScreen ? "logout-button-mobile" : ""}`}
+                                        className={`px-3 btn logout-button ${isMobileScreen ? "logout-header-button-mobile" : ""}`}
                                         onClick={() => setLogoutModal(true)}
                                     />
                                 </Navbar.Collapse>

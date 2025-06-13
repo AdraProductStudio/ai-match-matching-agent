@@ -319,7 +319,7 @@ const Signup = () => {
                 className="btn custom-button mt-5 mx-auto d-block w-100 "
                 onClick={handleSignup}
               />
-              <p className='mt-5 text-center register-login-option-text fs-14'>
+              <p className='mt-5 mb-0 text-center register-login-option-text fs-14'>
                 Already have an account? &nbsp;
                 <Link to="/" className='signup-login-navigation-link'>Login</Link>
               </p>

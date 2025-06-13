@@ -52,8 +52,6 @@ const ResetPassword = () => {
             Cookies.set("reset_password_token", token);
         }
 
-        console.log("Token:", token);
-        console.log("Email:", email);
     };
 
 
@@ -144,9 +142,6 @@ const ResetPassword = () => {
             return;
         }
 
-        console.log("handleReset")
-
-
         try {
             setLoading(true)
 
@@ -157,7 +152,6 @@ const ResetPassword = () => {
             };
 
             const response = await axiosInstance.post('/reset_password', payload);
-            console.log(response.data)
             if (response.data.error_code === 200) {
                 setLoading(false)
 
@@ -189,8 +183,8 @@ const ResetPassword = () => {
             </div>
             <Container className='main-section' fluid >
                 <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
-                    <Row className="login-container align-items-center  px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
-                        <Col className='my-5 '>
+                    <Row className="reset-password-container align-items-center   px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
+                        <Col className='pt-3'>
                             <h3 className='mb-5 text-center login-register-text'>Reset Password</h3>
 
                             <div className="row">
@@ -251,7 +245,7 @@ const ResetPassword = () => {
                                 className={`btn custom-button mt-5 mx-auto d-block w-100 cup ${loading && 'pe-none opacity-50'}`}
                                 onClick={handleReset}
                             />
-                            <p className='mt-5 text-center register-login-option-text fs-14'>
+                            <p className='mt-5  mb-0 text-center register-login-option-text fs-14'>
                                 Back to &nbsp;
                                 <Link to="/" className='signup-login-navigation-link'>Login</Link>
                             </p>

@@ -83,6 +83,29 @@ input[type='number']::placeholder {
   border-radius: 20px;
   background: url('../assets/images/chat-container-bg.png') rgba(211, 211, 211, 0.181) 0% 0% / 100px 100px repeat;
   margin-bottom: 10vh;
+  height: 75%;
+  overflow-y: scroll;
+
+}
+
+.forgot-password-container {
+  background-color: #0f0f0f;
+  z-index: 1;
+  border: 1px solid #212121;
+  border-radius: 20px;
+  background: url('../assets/images/chat-container-bg.png') rgba(211, 211, 211, 0.181) 0% 0% / 100px 100px repeat;
+  margin-bottom: 10vh;
+}
+
+.reset-password-container {
+  background-color: #0f0f0f;
+  overflow-y: scroll;
+  height: 85%;
+  z-index: 1;
+  border: 1px solid #212121;
+  border-radius: 20px;
+  background: url('../assets/images/chat-container-bg.png') rgba(211, 211, 211, 0.181) 0% 0% / 100px 100px repeat;
+  margin-bottom: 10vh;
 }
 
 .signup-container {
@@ -298,8 +321,6 @@ input[type="number"] {
   border-radius: 8px !important;
   padding-top: 15px !important;
   padding-bottom: 15px !important;
-  /* border: 10px solid grey !important; */
-  /* background-color: red; */
   border: 1px solid #fff !important;
   background-color: white !important;
 }
@@ -339,6 +360,10 @@ input[type="number"] {
   .call-now-button {
     width: 100% !important;
   }
+
+  .btn.logout-header-button-mobile {
+    padding: 0.4rem 1rem !important;
+  }
 }
 
 @media (max-width: 991px) {
@@ -351,4 +376,3 @@ input[type="number"] {
   cursor: not-allowed;
   background-color: #c5c5c5 !important;
 }
-

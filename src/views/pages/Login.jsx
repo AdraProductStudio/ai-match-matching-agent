@@ -107,8 +107,7 @@ const Login = () => {
         headers: {
           Authorization: basicAuth,
           domain: import.meta.env.VITE_DOMAIN,
-        },
-        withCredentials: true
+        }
       });
 
       if (response.data.error_code === 200) {
@@ -168,7 +167,7 @@ const Login = () => {
       <Container className='main-section' fluid >
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
           <Row className="login-container align-items-center  px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
-            <Col className='my-5 '>
+            <Col className='my-4 '>
               <h3 className='mb-5 text-center login-register-text '>Log In</h3>
 
               <div className="mb-4">
@@ -242,7 +241,7 @@ const Login = () => {
                 className={`btn custom-button mt-5 mx-auto d-block w-100 cup ${loading && 'pe-none opacity-50'}`}
                 onClick={handleLogin}
               />
-              <p className='mt-5 text-center register-login-option-text fs-14'>
+              <p className='mt-5 mb-0 text-center register-login-option-text fs-14'>
                 Don't have an account? &nbsp;
                 <Link to="/register" className='signup-login-navigation-link'>Register</Link>
               </p>
