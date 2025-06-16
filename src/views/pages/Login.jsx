@@ -114,7 +114,8 @@ const Login = () => {
         headers: {
           Authorization: basicAuth,
           domain: import.meta.env.VITE_DOMAIN,
-        }
+        },
+        withCredentials: true
       });
 
       if (response.data.error_code === 200) {
