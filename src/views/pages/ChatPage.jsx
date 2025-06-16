@@ -148,7 +148,9 @@ const ChatPage = () => {
                 setUserInputMessage("");
             }
 
-            const response = await axiosInstance.post("/chatbot_widget", payload);
+            const response = await axiosInstance.post("/chatbot_widget", payload,{
+                withCredentials : true
+            });
             const data = response?.data;
             const responseMessage = data?.data?.message;
             const isEmptyData = data?.error_code === 200 && Object.keys(data?.data || {}).length === 0;

@@ -8,6 +8,7 @@ const axiosInstance = axios.create({
         "Content-Type": "application/json",
         domain: import.meta.env.VITE_DOMAIN
     },
+    withCredentials: true
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -42,7 +43,7 @@ axiosInstance.interceptors.response.use(
 
                 if (response.data && response.data.data.token) {
                     const newAccessToken = response.data.data.token;
-                    Cookies.set("accessToken",newAccessToken)
+                    Cookies.set("accessToken", newAccessToken)
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                     return axiosInstance(originalRequest);
                 } else {

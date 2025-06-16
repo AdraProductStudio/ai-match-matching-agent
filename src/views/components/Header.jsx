@@ -49,7 +49,6 @@ const Header = ({ currentPage }) => {
                 Cookies.remove("phone_number")
             } else {
                 setLoading(false)
-                console.log(response.data.message)
             }
         } catch (error) {
             setLoading(false)

@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Col, Container,  Row } from 'react-bootstrap'
+import { Col, Container, Row } from 'react-bootstrap'
 import Header from '../components/Header'
 import CustomInput from '../../reusable-components/CustomInput'
 import CustomButton from '../../reusable-components/CustomButton'
 import CustomInputGroup from '../../reusable-components/CustomInputGroup'
-import { Link,  useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axiosInstance from '../../services/axiosInstance'
 import { toast } from 'react-toastify'
 import sha256 from 'sha256';
 import CustomSpinner from '../../reusable-components/CustomSpinner'
 import Cookies from 'js-cookie';
-
-
 
 
 const ResetPassword = () => {
@@ -35,21 +33,28 @@ const ResetPassword = () => {
     }, []);
 
     const getEmailId = () => {
-        const queryParams = window.location.href;
+        const token = new URLSearchParams(window.location.search).get('token');
+        if (!token) return;
 
-        const tokenMatch = queryParams.match(/token=([^?]+)/);
-        const emailMatch = queryParams.match(/email=([^&]+)/);
+        const parts = token.split(".");
+        let payload;
+        try {
+            payload = JSON.parse(atob(parts[1]));
+        } catch (e) {
+            console.error("Invalid token");
+            return;
+        }
 
-        const token = tokenMatch ? tokenMatch[1] : null;
-        const email = emailMatch ? emailMatch[1] : null;
+        const email = payload.sub;
 
-        if (email && token) {
+        if (email) {
             Cookies.set("forgot_password_email", email);
             Cookies.set("reset_password_token", token);
         }
 
+        const baseUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, baseUrl);
     };
-
 
 
 

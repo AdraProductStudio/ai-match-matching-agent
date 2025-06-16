@@ -119,6 +119,10 @@ input[type='number']::placeholder {
   margin-bottom: 10vh;
 }
 
+.page-not-found-container{
+  margin-top: -10vh;
+}
+
 .main-section .card-title {
   margin-bottom: 2.063rem;
   font-size: 1rem !important;
