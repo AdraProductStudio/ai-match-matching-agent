@@ -1,26 +1,18 @@
-import React, { useState } from 'react'
-import { Col, Container, Form, Row } from 'react-bootstrap'
+import { useState } from 'react'
+import { Col, Container,  Row } from 'react-bootstrap'
 import Header from '../components/Header'
-import Footer from '../components/Footer'
 import CustomInput from '../../reusable-components/CustomInput'
 import CustomButton from '../../reusable-components/CustomButton'
-import CustomInputGroup from '../../reusable-components/CustomInputGroup'
-import { Link, replace, useNavigate } from 'react-router-dom'
+import { Link} from 'react-router-dom'
 import axiosInstance from '../../services/axiosInstance'
 import { toast } from 'react-toastify'
-import sha256 from 'sha256';
 import CustomSpinner from '../../reusable-components/CustomSpinner'
 import Cookies from 'js-cookie';
-import axios from 'axios'
-import Image from '../../utils/images'
-import PhoneInput from 'react-phone-input-2'
-
 
 
 
 const ForgotPassword = () => {
 
-    const navigate = useNavigate()
     const [email, setEmail] = useState("")
     const [emailError, setEmailError] = useState(false)
     const [emailErrorMessage, setEmailErrorMessage] = useState(false)

@@ -27,11 +27,29 @@ const ChatPage = () => {
 
 
 
+    // useEffect(() => {
+    //     const handleVisibilityChange = () => {
+    //         if (document.visibilityState === 'hidden') {
+    //             handleSessionClose("close")
+    //             setNewChatModal(true)
+    //         }
+    //     };
+
+    //     document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    //     return () => {
+    //         document.removeEventListener('visibilitychange', handleVisibilityChange);
+    //     };
+    // }, []);
+
+
+
     useEffect(() => {
         const handleResize = () => setIsMobileScreen(window.innerWidth < 576);
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
 
 
     useEffect(() => {
@@ -54,6 +72,10 @@ const ChatPage = () => {
     }, []);
 
 
+
+
+
+
     useEffect(() => {
         if (scrollViewRef.current) {
             scrollViewRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -72,7 +94,6 @@ const ChatPage = () => {
             } else {
                 if (textareaMobile) {
                     textareaMobile.style.pointerEvents = "all";
-
                     textareaMobile.readOnly = true;
                     textareaMobile.focus();
                     setTimeout(() => {
@@ -257,9 +278,7 @@ const ChatPage = () => {
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
-            if (response.data.error_code === 200) {
-                console.log(response.data.message)
-            } else {
+            if (response.data.error_code !== 200) {
                 console.log(response.data.message)
             }
         } catch (error) {

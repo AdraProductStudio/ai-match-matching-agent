@@ -1,19 +1,15 @@
-import React, { useState } from 'react'
-import { Col, Container, Form, Row } from 'react-bootstrap'
+import { useEffect, useState } from 'react'
+import { Col, Container, Row } from 'react-bootstrap'
 import Header from '../components/Header'
-import Footer from '../components/Footer'
 import CustomInput from '../../reusable-components/CustomInput'
 import CustomButton from '../../reusable-components/CustomButton'
 import CustomInputGroup from '../../reusable-components/CustomInputGroup'
-import { Link, replace, useNavigate } from 'react-router-dom'
-import axiosInstance from '../../services/axiosInstance'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import sha256 from 'sha256';
 import CustomSpinner from '../../reusable-components/CustomSpinner'
 import Cookies from 'js-cookie';
 import axios from 'axios'
-import Image from '../../utils/images'
-import PhoneInput from 'react-phone-input-2'
 
 
 
@@ -33,6 +29,17 @@ const Login = () => {
     phoneNumberError: false,
     passwordError: false,
   })
+
+  useEffect(() => {
+    const phone = Cookies.get("phone_number");
+    const token = Cookies.get("accessToken");
+
+    if (phone || token) {
+      Cookies.remove("phone_number");
+      Cookies.remove("accessToken");
+    }
+  }, []);
+
 
 
   const handleShowPassword = (name) => {
@@ -132,26 +139,6 @@ const Login = () => {
     }
   };
 
-  const handleAuth = async () => {
-    try {
-      const payload = {}
-      const response = await axiosInstance.post('/oauth', payload);
-      if (response.data.error_code === 200) {
-        toast.success(response.data.message);
-      } else if (response.data.error_code === 409) {
-        toast.warn(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-    }
-  };
-
 
   return (
     <section className='layout' style={{ height: '100dvh', backgroundColor: 'pink' }}>
@@ -183,29 +170,6 @@ const Login = () => {
                   className="mb-2 "
                 />
 
-                {/* <Form.Label className={``}>
-                  Phone number
-                </Form.Label>
-                <PhoneInput
-
-                  id="floatingInput"
-                  specialLabel="Mobile Number"
-                  country="us"
-                  dataTestid="mobileNumber"
-                  countryCodeEditable={false}
-                  enableSearch
-                  onChange={(e, phone) =>
-                    handlePhoneInput(e, phone, "contactno")
-                  }
-                  value={`${dialCode}${partnerSignupInputValues.mobileNumber}`}
-                  inputProps={{
-                    alt: "mobileNumber",
-                    type: "tel",
-                    placeholder: "Mobile Number",
-                    required: true,
-                  }}
-
-                /> */}
                 {
                   error.phoneNumberError &&
                   <p className="text-danger">{errorMessage.phoneNumberErrorMessage}</p>

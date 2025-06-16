@@ -15,7 +15,7 @@ const PageNotFound = () => {
                     <Image src='https://d1olhs2thomfrd.cloudfront.net/pageNotFound.png' width={180} className='' alt="pageNotFound" />
                 </div>
                 <h1 className='h1' style={{ color: '#667da7' }}>Page Not Found</h1>
-                <p className='mb-0 text-center text-white'>Oops! The page you are looking for does not exist</p>
+                <p className='text-center text-white my-3'>Oops! The page you are looking for does not exist</p>
                 <div className="btn-wrapper go-top">
                     <CustomButton
                         buttonName="Back to Home"

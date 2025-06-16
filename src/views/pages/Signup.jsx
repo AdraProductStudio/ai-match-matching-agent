@@ -203,7 +203,7 @@ const Signup = () => {
       <Container className='main-section' fluid >
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
           <Row className="signup-container align-items-center px-3 px-md-5 py-3 rounded-3 col-12 col-md-8 col-lg-8 col-xl-8 " >
-            <Col className='my-5 '>
+            <Col className='my-4 '>
               <h3 className='mb-5 text-center login-register-text'>Register</h3>
               <div className="row">
                 <div className="mb-3 col-12 col-xl-6">
@@ -316,7 +316,7 @@ const Signup = () => {
 
               <CustomButton
                 buttonName="Register"
-                className="btn custom-button mt-5 mx-auto d-block w-100 "
+                className="btn custom-button mt-5  mx-auto d-block w-100 "
                 onClick={handleSignup}
               />
               <p className='mt-5 mb-0 text-center register-login-option-text fs-14'>
