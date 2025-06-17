@@ -17,6 +17,7 @@ const ResetPassword = () => {
     const navigate = useNavigate()
 
     const [loading, setLoading] = useState(false)
+    const [email, setEmail] = useState("");
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [resetInputs, setResetInputs] = useState({})
@@ -28,6 +29,7 @@ const ResetPassword = () => {
         passwordError: false,
         confirmPasswordError: false
     })
+
     useEffect(() => {
         getEmailId();
     }, []);
@@ -45,11 +47,12 @@ const ResetPassword = () => {
             return;
         }
 
-        const email = payload.sub;
+        const emailFromToken = payload.sub;
 
-        if (email) {
-            Cookies.set("forgot_password_email", email);
+        if (emailFromToken) {
+            Cookies.set("forgot_password_email", emailFromToken);
             Cookies.set("reset_password_token", token);
+            setEmail(emailFromToken); // Update state for input
         }
 
         const baseUrl = window.location.origin + window.location.pathname;
@@ -195,7 +198,7 @@ const ResetPassword = () => {
                                         inputLabel="Email"
                                         id="email"
                                         name="email"
-                                        value={Cookies.get("forgot_password_email")}
+                                        value={email}
                                         className="mb-2 email-disabled"
                                     />
                                 </div>

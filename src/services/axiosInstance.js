@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use((config) => {
-    const token = Cookies.get("access_token");
+    const token = Cookies.get("accessToken");
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
         if (error.response && error.response.status_code === 401 || error.response.data.detail === "Token expired") {
             originalRequest._retry = true;
             try {
-                const token = Cookies.get("access_token");
+                const token = Cookies.get("accessToken");
                 const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/refreshtoken`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -43,17 +43,17 @@ axiosInstance.interceptors.response.use(
 
                 if (response.data && response.data.data.token) {
                     const newAccessToken = response.data.data.token;
-                    Cookies.set("access_token", newAccessToken)
+                    Cookies.set("accessToken", newAccessToken)
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                     return axiosInstance(originalRequest);
                 } else {
                     console.error("Failed to refresh token. Logging out...");
-                    Cookies.remove("access_token");
+                    Cookies.remove("accessToken");
                     return Promise.reject(error);
                 }
             } catch (refreshError) {
                 console.error("Error refreshing token:", refreshError);
-                Cookies.remove("access_token");
+                Cookies.remove("accessToken");
             }
         }
         return Promise.reject(error);

@@ -148,8 +148,8 @@ const ChatPage = () => {
                 setUserInputMessage("");
             }
 
-            const response = await axiosInstance.post("/chatbot_widget", payload,{
-                withCredentials : true
+            const response = await axiosInstance.post("/chatbot_widget", payload, {
+                withCredentials: true
             });
             const data = response?.data;
             const responseMessage = data?.data?.message;
@@ -303,7 +303,7 @@ const ChatPage = () => {
                 setLogoutLoading(false)
                 setNewChatModal(false);
                 navigate("/");
-                Cookies.remove("access_token")
+                Cookies.remove("accessToken")
                 Cookies.remove("phone_number")
             } else {
                 setLogoutLoading(false)
