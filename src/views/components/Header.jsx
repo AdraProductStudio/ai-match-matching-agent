@@ -45,7 +45,7 @@ const Header = ({ currentPage }) => {
                 setLoading(false)
                 setLogoutModal(false);
                 navigate("/");
-                Cookies.remove("accessToken")
+                Cookies.remove("access_token")
                 Cookies.remove("phone_number")
             } else {
                 setLoading(false)
@@ -67,7 +67,7 @@ const Header = ({ currentPage }) => {
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
             if (response.data.error_code === 200) {
-                Cookies.remove("accessToken")
+                Cookies.remove("access_token")
                 Cookies.remove("phone_number")
                 navigate("/");
             } else {
@@ -159,12 +159,9 @@ const Header = ({ currentPage }) => {
                                 handleLogout();
                             }}
                         />
-
                     </div>
-
                 </Modal.Body>
             </Modal>
-
 
         </>
     )

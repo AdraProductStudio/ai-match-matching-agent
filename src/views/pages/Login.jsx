@@ -32,11 +32,11 @@ const Login = () => {
 
   useEffect(() => {
     const phone = Cookies.get("phone_number");
-    const token = Cookies.get("accessToken");
+    const token = Cookies.get("access_token");
 
     if (phone || token) {
       Cookies.remove("phone_number");
-      Cookies.remove("accessToken");
+      Cookies.remove("access_token");
     }
   }, []);
 
@@ -120,9 +120,11 @@ const Login = () => {
 
       if (response.data.error_code === 200) {
         Cookies.set("phone_number", `+91${loginInputs.phoneNumber}`)
-        Cookies.set("accessToken", response.data.data.token)
-        navigate('/chat')
-        setLoading(false)
+        Cookies.set("access_token", response.data.data.token)
+        setTimeout(() => {
+          setLoading(false)
+          navigate('/chat')
+        }, 300);
       } else {
         setLoading(false)
         toast.warn(response.data.message);

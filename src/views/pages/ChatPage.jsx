@@ -303,7 +303,7 @@ const ChatPage = () => {
                 setLogoutLoading(false)
                 setNewChatModal(false);
                 navigate("/");
-                Cookies.remove("accessToken")
+                Cookies.remove("access_token")
                 Cookies.remove("phone_number")
             } else {
                 setLogoutLoading(false)
