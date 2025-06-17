@@ -18,6 +18,8 @@ const ChatPage = () => {
     const [logoutLoading, setLogoutLoading] = useState(false)
     const [userInputMessage, setUserInputMessage] = useState("");
     const timeouts = useRef([]);
+    const isLoggedInRef = useRef(true);
+
     let loopTimeoutRef = useRef(null);
     const scrollViewRef = useRef(null);
     const [newChatModal, setNewChatModal] = useState(false)
@@ -148,9 +150,7 @@ const ChatPage = () => {
                 setUserInputMessage("");
             }
 
-            const response = await axiosInstance.post("/chatbot_widget", payload, {
-                withCredentials: true
-            });
+            const response = await axiosInstance.post("/chatbot_widget", payload);
             const data = response?.data;
             const responseMessage = data?.data?.message;
             const isEmptyData = data?.error_code === 200 && Object.keys(data?.data || {}).length === 0;
@@ -231,12 +231,16 @@ const ChatPage = () => {
     };
 
     const startIdleTracking = (mode) => {
+        if (!isLoggedInRef.current) return; // 🚫 Stop if user logged out
+
         if (mode === "close") {
             setUserInputMessage("");
             return;
         }
 
         loopTimeoutRef = setTimeout(async () => {
+            if (!isLoggedInRef.current) return; // 🚫 Prevent call if logged out
+
             const response = await handleSendMessage("", "", "step");
             if (response && typeof response === "string" && response.trim() !== "") {
                 resetIdleTracking("continuous");
@@ -300,6 +304,8 @@ const ChatPage = () => {
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
             if (response.data.error_code === 200) {
+                      isLoggedInRef.current = false;
+
                 setLogoutLoading(false)
                 setNewChatModal(false);
                 navigate("/");

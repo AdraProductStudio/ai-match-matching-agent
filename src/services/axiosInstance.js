@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
         "Content-Type": "application/json",
         domain: import.meta.env.VITE_DOMAIN
     },
-    withCredentials: true
+    // withCredentials: true
 });
 
 axiosInstance.interceptors.request.use((config) => {
