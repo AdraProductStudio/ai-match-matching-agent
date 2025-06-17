@@ -8,6 +8,7 @@ const axiosInstance = axios.create({
         "Content-Type": "application/json",
         domain: import.meta.env.VITE_DOMAIN
     },
+    // withCredentials: true
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -29,7 +30,7 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response && error.response.status === 401) {
+        if (error.response && error.response.status_code === 401 || error.response.data.detail === "Token expired") {
             originalRequest._retry = true;
             try {
                 const token = Cookies.get("accessToken");
@@ -42,7 +43,7 @@ axiosInstance.interceptors.response.use(
 
                 if (response.data && response.data.data.token) {
                     const newAccessToken = response.data.data.token;
-                    Cookies.set("accessToken",newAccessToken)
+                    Cookies.set("accessToken", newAccessToken)
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                     return axiosInstance(originalRequest);
                 } else {

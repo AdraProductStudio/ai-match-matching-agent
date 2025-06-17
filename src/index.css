@@ -21,7 +21,7 @@
 .login-register-text {
   font-weight: 700;
   color: #fff;
-  font-size: clamp(2rem, 2vw, 3rem);
+  font-size: clamp(1.8rem, 2vw, 3rem)
 }
 
 body {
@@ -78,11 +78,34 @@ input[type='number']::placeholder {
 }
 
 .login-container {
+  z-index: 1;
+  border: 1px solid #212121;
+  border-radius: 20px;
+  background: url('../assets/images/chat-container-bg.png') rgba(211, 211, 211, 0.181) 0% 0% / 100px 100px repeat;
+  margin-bottom: 10vh;
+  height: 75%;
+  overflow-y: scroll;
+
+}
+
+.forgot-password-container {
   background-color: #0f0f0f;
   z-index: 1;
   border: 1px solid #212121;
   border-radius: 20px;
   background: url('../assets/images/chat-container-bg.png') rgba(211, 211, 211, 0.181) 0% 0% / 100px 100px repeat;
+  margin-bottom: 10vh;
+}
+
+.reset-password-container {
+  background-color: #0f0f0f;
+  overflow-y: scroll;
+  height: 85%;
+  z-index: 1;
+  border: 1px solid #212121;
+  border-radius: 20px;
+  background: url('../assets/images/chat-container-bg.png') rgba(211, 211, 211, 0.181) 0% 0% / 100px 100px repeat;
+  margin-bottom: 10vh;
 }
 
 .signup-container {
@@ -93,7 +116,11 @@ input[type='number']::placeholder {
   border: 1px solid #212121;
   border-radius: 20px;
   background: url('../assets/images/chat-container-bg.png') rgba(211, 211, 211, 0.181) 0% 0% / 100px 100px repeat;
+  margin-bottom: 10vh;
+}
 
+.page-not-found-container{
+  margin-top: -10vh;
 }
 
 .main-section .card-title {
@@ -145,14 +172,15 @@ input[type="number"] {
 }
 
 .signup-login-navigation-link {
-  color: #3d89fc;
+  color: #e166ff;
   font-size: 15.2px;
-  text-decoration: none;
   transition: all 0.2s;
+  text-decoration: none;
+
 }
 
 .signup-login-navigation-link:hover {
-  color: #1271fe;
+  color: #e167ff;
   text-decoration: underline;
 }
 
@@ -297,8 +325,6 @@ input[type="number"] {
   border-radius: 8px !important;
   padding-top: 15px !important;
   padding-bottom: 15px !important;
-  /* border: 10px solid grey !important; */
-  /* background-color: red; */
   border: 1px solid #fff !important;
   background-color: white !important;
 }
@@ -339,7 +365,18 @@ input[type="number"] {
     width: 100% !important;
   }
 
-  /* .login-register-text {
-    font-size: 1.9rem;
-  } */
+  .btn.logout-header-button-mobile {
+    padding: 0.4rem 1rem !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .signup-container {
+    margin-bottom: 8vh;
+  }
+}
+
+.email-disabled {
+  cursor: not-allowed;
+  background-color: #c5c5c5 !important;
 }

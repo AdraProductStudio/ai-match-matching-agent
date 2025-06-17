@@ -1,12 +1,10 @@
-import React, { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import Header from '../components/Header'
-import Footer from '../components/Footer'
 import CustomInput from '../../reusable-components/CustomInput'
 import CustomButton from '../../reusable-components/CustomButton'
 import CustomInputGroup from '../../reusable-components/CustomInputGroup'
-import { Link, replace, useNavigate } from 'react-router-dom'
-import axiosInstance from '../../services/axiosInstance'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import sha256 from 'sha256';
 import CustomSpinner from '../../reusable-components/CustomSpinner'
@@ -32,6 +30,17 @@ const Login = () => {
     passwordError: false,
   })
 
+  useEffect(() => {
+    const phone = Cookies.get("phone_number");
+    const token = Cookies.get("accessToken");
+
+    if (phone || token) {
+      Cookies.remove("phone_number");
+      Cookies.remove("accessToken");
+    }
+  }, []);
+
+
 
   const handleShowPassword = (name) => {
     switch (name) {
@@ -39,7 +48,6 @@ const Login = () => {
         setShowPassword(!showPassword)
         break;
       default:
-        console.log("default")
         break;
     }
   }
@@ -107,13 +115,16 @@ const Login = () => {
           Authorization: basicAuth,
           domain: import.meta.env.VITE_DOMAIN,
         },
+        // withCredentials: true
       });
 
       if (response.data.error_code === 200) {
         Cookies.set("phone_number", `+91${loginInputs.phoneNumber}`)
         Cookies.set("accessToken", response.data.data.token)
-        navigate('/chat')
-        setLoading(false)
+        setTimeout(() => {
+          setLoading(false)
+          navigate('/chat')
+        }, 300);
       } else {
         setLoading(false)
         toast.warn(response.data.message);
@@ -131,8 +142,9 @@ const Login = () => {
     }
   };
 
+
   return (
-    <section className='layout'>
+    <section className='layout' style={{ height: '100dvh', backgroundColor: 'pink' }}>
       <Header />
       <div className="left-purple-ball">
       </div>
@@ -145,10 +157,10 @@ const Login = () => {
       <Container className='main-section' fluid >
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
           <Row className="login-container align-items-center  px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
-            <Col className='my-5 '>
-              <h3 className='mb-5 text-center login-register-text'>Log In</h3>
+            <Col className='my-4 '>
+              <h3 className='mb-5 text-center login-register-text '>Log In</h3>
 
-              <div className="mb-3">
+              <div className="mb-4">
                 <CustomInput
                   inputLabel="Phone number"
                   autoFocus={true}
@@ -160,13 +172,14 @@ const Login = () => {
                   value={loginInputs?.phoneNumber || ""}
                   className="mb-2 "
                 />
+
                 {
                   error.phoneNumberError &&
                   <p className="text-danger">{errorMessage.phoneNumberErrorMessage}</p>
                 }
               </div>
 
-              <div className="mb-3">
+              <div className="mb-4">
                 <CustomInputGroup
                   inputLabel="Password"
                   type={showPassword ? "text" : "password"}
@@ -185,12 +198,17 @@ const Login = () => {
                   <p className="text-danger">{errorMessage.passwordErrorMessage}</p>
                 }
               </div>
+
+              <p className='mt-2 text-end register-login-option-text fs-14'>
+                <Link to="/forgot-password" className='text-light fs-14 text-decoration-none'>Forgot password?</Link>
+              </p>
+
               <CustomButton
                 buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Login"}
                 className={`btn custom-button mt-5 mx-auto d-block w-100 cup ${loading && 'pe-none opacity-50'}`}
                 onClick={handleLogin}
               />
-              <p className='mt-5 text-center register-login-option-text fs-14'>
+              <p className='mt-5 mb-0 text-center register-login-option-text fs-14'>
                 Don't have an account? &nbsp;
                 <Link to="/register" className='signup-login-navigation-link'>Register</Link>
               </p>
@@ -198,8 +216,6 @@ const Login = () => {
           </Row>
         </Container>
       </Container >
-
-      {/* <Footer isFooterText={true} /> */}
 
     </section>
   )

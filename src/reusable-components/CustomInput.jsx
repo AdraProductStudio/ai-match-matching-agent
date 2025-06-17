@@ -31,7 +31,8 @@ const CustomInput = ({
     onChange,
     onBlur,
     className,
-    autoFocus
+    autoFocus,
+    required
 }) => {
     return (
         <>
@@ -39,6 +40,7 @@ const CustomInput = ({
                 {inputLabel}
             </Form.Label>
             <Form.Control
+                required={required}
                 autoFocus={autoFocus}
                 className={className}
                 type={type}
@@ -53,6 +55,7 @@ const CustomInput = ({
                 hidden={inputHidden}
                 pattern={inputPattern}
                 readOnly={readOnly}
+                disabled={btnDisable}
             />
         </>
     )

@@ -131,14 +131,9 @@
 .chatpage-component .sending-message {
     padding: 0.938rem 1.5rem 0.938rem 1.563rem;
     border-radius: 14px 1px 14px 14px;
-
     margin-right: 0;
     color: #FFF;
     font-family: "Comfortaa", sans-serif;
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
     max-width: 75%;
     word-wrap: break-word;
     white-space: pre-line;
@@ -187,7 +182,7 @@
 .chatpage-component .dots-loader span {
     width: 8px;
     height: 8px;
-    background-color: #000;
+    background-color: #fff;
     border-radius: 50%;
     animation: bounce 1s infinite ease-in-out;
 }
@@ -497,6 +492,16 @@
     background-color: #5a5a5a;
 }
 
+@media (max-width : 1440px) {
+    .chatpage-component .sending-message {
+        font-size: 16px;
+    }
+
+    .chatpage-component .recommendation-text {
+        font-size: 16px;
+    }
+}
+
 @media (max-width : 768px) {
 
     .chatpage-component * {
@@ -594,6 +599,221 @@
         word-wrap: break-word;
         padding: 1rem;
         line-height: 23px;
+    }
+
+    .chatpage-component .dots-loader span {
+        width: 5px;
+        height: 5px;
+        background-color: #fff;
+        border-radius: 50%;
+        animation: bounce 1s infinite ease-in-out;
+    }
+
+    .chatpage-component .receiving-message {
+        max-width: 85%;
+        word-wrap: break-word;
+        padding: 1rem;
+        line-height: 23px;
+    }
+
+    .chatpage-component .sending-message-time {
+        font-size: 0.65rem !important;
+    }
+
+    .chatpage-component .receiving-message-time {
+        font-size: 0.65rem !important;
+    }
+
+
+    .chatpage-component .chat-textarea-section {
+        left: 0rem;
+        bottom: 2.313rem;
+        width: 100%;
+        padding: 0 1rem;
+    }
+
+    .chatpage-component .chat-textarea-container {
+        border-radius: 20px 0px 0px 20px;
+        background: #FFF;
+        height: 3.125rem;
+        width: 100%;
+        padding: 0 0.3rem;
+    }
+
+    .chatpage-component .chat-textarea-field {
+        height: 2.5rem;
+        border-radius: 5px;
+        background: #FFF;
+        resize: none;
+        border: none;
+        outline: none;
+        padding: 0.6rem 0.625rem;
+        width: 100%;
+        margin: auto 0;
+    }
+
+    .chatpage-component .record-icon {
+        position: absolute;
+        right: 0.6rem;
+        top: 0.7rem;
+    }
+
+    .chatpage-component .send-btn-container {
+        display: flex;
+        width: 3.113rem;
+        height: 3.125rem;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        border-radius: 0px 20px 20px 0px;
+        background: #fff;
+    }
+
+    .chatpage-component .send-btn-container svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .chatpage-component .send-btn-container:hover {
+        background: #262626;
+    }
+
+    .chatpage-component-modal .media-upload-container .drop-file-container {
+        margin-top: 1.023rem;
+        border-radius: 8.882px 8.882px 0px 0px;
+        border: 1.11px dashed #5a5a5a;
+        padding: 0.5rem !important;
+        margin-left: 0.3rem;
+        margin-right: 0.3rem;
+        max-width: 100%;
+    }
+
+    .chatpage-component-modal .media-upload-container .drop-file-container .drop-file-text {
+        font-size: 0.875rem;
+    }
+
+    .chatpage-component-modal .media-upload-container .drop-file-container .drop-file-sub-text {
+        font-size: 0.771rem;
+    }
+
+    .chatpage-component-modal .media-upload-container .browse-file-container .browse-text {
+        margin-left: 0.726rem;
+        font-family: "Comfortaa", sans-serif;
+        font-size: 0.885rem;
+    }
+
+    .chatpage-component-modal .media-upload-container .browse-file-container .browse-file-sub-text {
+        font-size: 0.771rem;
+    }
+
+    .chatpage-component-modal .upload-progress-container .uploading-text {
+        font-size: 0.895rem;
+    }
+
+    .chatpage-component-modal .upload-progress-container .in-progress-text {
+        font-size: 0.895rem;
+        ;
+    }
+
+
+}
+
+@media (max-width : 576px) {
+
+    .chatpage-component * {
+        font-size: 0.875rem !important;
+    }
+
+    .chatpage-component .main-section-container {
+        padding: 0 0 !important;
+    }
+
+    .chatpage-component .start-searching-text svg {
+        width: 20px;
+    }
+
+    .chatpage-component .start-searching-text {
+        font-size: 14px !important;
+    }
+
+    .chatpage-component .chat-container {
+        position: relative;
+        width: 100%;
+        margin: 0 auto 2.5rem;
+        height: 85vh;
+        border-radius: 18px;
+        background: #040404;
+        border: 1px solid #212121;
+        border-radius: 20px;
+        background: url('../assets/images/chat-container-bg.png') rgba(211, 211, 211, 0.224) 0% 0% / 100px 100px repeat;
+        mix-blend-mode: normal;
+
+    }
+
+
+    .Adra-MR-online-status-container {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .Adra-MR-header-online-status-container {
+        gap: 11px;
+        margin: 10px 0px;
+        align-items: center;
+    }
+
+    .adra-logo {
+        width: 5%;
+        height: 6%;
+    }
+
+    .ai-agent-text {
+        font-family: "Comfortaa", sans-serif;
+        font-size: 16px;
+        color: #fff;
+        margin-bottom: 0px;
+    }
+
+    .online-status {
+        margin-bottom: 0;
+    }
+
+    .online-text {
+        font-size: 10px !important;
+        font-family: "Comfortaa", sans-serif;
+        color: #fff;
+        margin-left: 5px;
+    }
+
+    .Adra-MR-header-brand-image {
+        align-self: self-end;
+        margin-bottom: -6px;
+    }
+
+    .chatpage-component .sending-receiving-message-container {
+        margin-top: 0.5rem;
+        height: 100%;
+        overflow-y: scroll;
+        padding: 0 1rem;
+    }
+
+    .chatpage-component .default-receiving-suggestion {
+        padding: 0.9rem;
+    }
+
+    .chatpage-component .sending-message-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .chatpage-component .receiving-message-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .chatpage-component .sending-message {
+        max-width: 85%;
+        word-wrap: break-word;
+        padding: 1rem;
+        line-height: 23px;
 
     }
 
@@ -635,7 +855,7 @@
         resize: none;
         border: none;
         outline: none;
-        padding: 0.5rem 0.625rem;
+        padding: 0.6rem 0.625rem;
         width: 100%;
         margin: auto 0;
     }
