@@ -19,6 +19,7 @@ const ChatPage = () => {
     const [userInputMessage, setUserInputMessage] = useState("");
     const timeouts = useRef([]);
     const isLoggedInRef = useRef(true);
+    const [inputFocus, setInputFocus] = useState(false)
 
     let loopTimeoutRef = useRef(null);
     const scrollViewRef = useRef(null);
@@ -304,7 +305,7 @@ const ChatPage = () => {
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
             if (response.data.error_code === 200) {
-                      isLoggedInRef.current = false;
+                isLoggedInRef.current = false;
 
                 setLogoutLoading(false)
                 setNewChatModal(false);
@@ -485,7 +486,7 @@ const ChatPage = () => {
                         </Modal>
                     </section>
                     :
-
+                    // window.innerWidth < 576 ?
                     <section className='chatpage-component bg-dark'>
                         <div className="left-purple-ball">
                         </div>

@@ -135,7 +135,7 @@ const Header = ({ currentPage }) => {
             >
                 <Modal.Body >
                     <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Log out</h3>
-                    <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: '16px' }}>
+                    <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: isMobileScreen ? '14px' : '16px' }}>
                         Are you sure you want to log out?
                     </p>
 

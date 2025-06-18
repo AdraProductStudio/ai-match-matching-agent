@@ -119,7 +119,7 @@ input[type='number']::placeholder {
   margin-bottom: 10vh;
 }
 
-.page-not-found-container{
+.page-not-found-container {
   margin-top: -10vh;
 }
 
@@ -176,7 +176,38 @@ input[type="number"] {
   font-size: 15.2px;
   transition: all 0.2s;
   text-decoration: none;
+}
 
+.register-email-field .verify-icon {
+  position: absolute;
+  top: 55%;
+  right: 3%;
+}
+
+.email-verify-icon {
+  color: grey;
+}
+
+.email-verifying-icon {
+  animation: hueSpin 2s linear infinite;
+  display: inline-block;
+  will-change: filter;
+  color: red;
+}
+
+.email-verify-warning-icon {
+  color: grey;
+
+}
+
+.email-verified-icon {
+  color: #BD33DF;
+}
+
+@keyframes hueSpin {
+  0%   { color: grey; }   /* orange */
+  50%  { color: #BD33DF; }     /* green */
+  100% { color: grey; }   /* orange again to loop */
 }
 
 .signup-login-navigation-link:hover {
@@ -231,14 +262,6 @@ input[type="number"] {
 }
 
 .btn.cancel-button {
-  /* background: linear-gradient(98deg, #b015d7 -0.44%, #671C79 106.06%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  border: 2px solid transparent;
-  border-image: linear-gradient(98deg, #b015d7 -0.44%, #671C79 106.06%);
-  border-image-slice: 1;
-  border-radius: 12px;
-  overflow: hidden; */
   background: #fff;
   color: #b015d7;
   width: 12rem;
@@ -367,6 +390,10 @@ input[type="number"] {
 
   .btn.logout-header-button-mobile {
     padding: 0.4rem 1rem !important;
+  }
+
+  .btn.cancel-button {
+    font-size: 0.875rem;
   }
 }
 

@@ -10,6 +10,8 @@ import axiosInstance from '../../services/axiosInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import sha256 from 'sha256';
 import { toast } from 'react-toastify'
+import { FaCircleCheck } from "react-icons/fa6";
+
 
 
 
@@ -22,6 +24,8 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [signupInputs, setSignupInputs] = useState({})
+  const [emailVerified, setEmailVerified] = useState(false)
+  const [emailVerifying, setEmailVerifying] = useState(false)
   const [errorMessage, setErrorMessage] = useState({
     firstNameErrorMessage: "",
     lastNameErrorMessage: "",
@@ -82,6 +86,46 @@ const Signup = () => {
     }
   };
 
+  const handleVerifyEmail = async () => {
+    let hasError = false;
+    const email = signupInputs?.email?.trim() || "";
+    if (!email) {
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Email should not be empty" }));
+      hasError = true;
+    } else if (!validateEmail(email)) {
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please enter a valid email" }));
+      hasError = true;
+    }
+    if (hasError) {
+      console.error("Email Validation failed");
+      return;
+    }
+    try {
+
+      setEmailVerifying(true)
+
+      const payload = {
+        "email": signupInputs?.email?.trim(),
+      };
+      const response = await axiosInstance.post('/verify_email', payload);
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
+      console.log("response.data", response.data)
+      if (response.data.error_code === 200) {
+        setEmailVerifying(false)
+        setEmailVerified(true)
+        toast.success(response.data.message);
+      } else {
+        setEmailVerifying(false)
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      setEmailVerifying(false)
+      toast.error(error.message);
+    }
+  }
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -241,17 +285,26 @@ const Signup = () => {
                 </div>
               </div>
               <div className="row">
-                <div className="mb-3 col-12 col-xl-6">
-                  <CustomInput
-                    inputLabel="Email"
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Enter email"
-                    onChange={handleSignupInputs}
-                    value={signupInputs?.email || ""}
-                    className="mb-2"
-                  />
+                <div className="mb-3 col-12 col-xl-6 register-email-field ">
+                  <div className='position-relative'>
+                    <CustomInput
+                      inputLabel="Email"
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="Enter email"
+                      onChange={handleSignupInputs}
+                      value={signupInputs?.email || ""}
+                      className="mb-2 position-relative"
+                    />
+                    <div className='position-absolute verify-icon cup' onClick={handleVerifyEmail}>
+                      <FaCircleCheck
+                        size={20}
+                        className={emailVerifying ? 'email-verifying-icon' : emailVerified ? 'email-verified-icon' : error.emailError ? 'email-verify-warning-icon' : 'email-verify-icon'}
+                      />
+                    </div>
+                  </div>
+
                   {
                     error.emailError &&
                     <p className="text-danger">{errorMessage.emailErrorMessage}</p>
