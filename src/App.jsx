@@ -17,22 +17,17 @@ function App() {
 
   return (
     <>
-
       <BrowserRouter>
-
         <ToastContainer theme='light' />
         <Routes>
           <Route index path='/' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/reset-password' element={<ResetPassword />} />
-
           <Route element={<ProtectedRoute />}>
             <Route path="/chat" element={<ChatPage />} />
           </Route>
-
           <Route path='*' element={<PageNotFound />} />
-
         </Routes>
       </BrowserRouter>
     </>

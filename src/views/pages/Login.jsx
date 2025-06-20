@@ -118,8 +118,6 @@ const Login = () => {
         // withCredentials: true
       });
 
-
-      console.log("response.data", response.data)
       if (response.data.error_code === 200) {
         sessionStorage.setItem("phone_number", `+91${loginInputs.phoneNumber}`)
         sessionStorage.setItem("accessToken", response.data.data.token)

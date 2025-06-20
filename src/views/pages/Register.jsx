@@ -95,7 +95,6 @@ const Register = () => {
     if (maxLengths[name] && value.length > maxLengths[name]) return;
 
     if (name === "email") {
-      console.log("value", value)
       if (value !== verifiedEmail) {
         setEmailVerified(false)
       }
@@ -148,7 +147,6 @@ const Register = () => {
       };
       const response = await axiosInstance.post('/verify_email', payload);
 
-      console.log("response.data", response.data)
       if (response.data.error_code === 200) {
         setEmailVerifying(false)
         setEmailVerified(true)
@@ -265,12 +263,6 @@ const Register = () => {
       hasError = true;
     }
 
-    if (confirmPassword === password) {
-      setError(prev => ({ ...prev, confirmPasswordError: false }));
-      setErrorMessage(prev => ({ ...prev, confirmPasswordErrorMessage: "" }));
-      hasError = false;
-    }
-
     if (hasError) {
       console.error("Validation failed: Fields cannot be empty or invalid");
       return;
@@ -335,9 +327,6 @@ const Register = () => {
     return passwords;
   }
 
-
-
-  console.log("signupInputs", signupInputs)
 
 
   return (
