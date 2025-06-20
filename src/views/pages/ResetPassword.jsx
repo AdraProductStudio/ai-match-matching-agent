@@ -173,6 +173,12 @@ const ResetPassword = () => {
             hasError = true;
         }
 
+        if (confirmPassword === password) {
+            setError(prev => ({ ...prev, confirmPasswordError: false }));
+            setErrorMessage(prev => ({ ...prev, confirmPasswordErrorMessage: "" }));
+            hasError = false;
+        }
+
         if (hasError) {
             console.error("Validation failed: Fields cannot be empty or invalid");
             return;
