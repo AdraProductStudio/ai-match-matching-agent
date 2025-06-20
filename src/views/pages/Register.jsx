@@ -12,6 +12,7 @@ import sha256 from 'sha256';
 import { toast } from 'react-toastify'
 import { FaCircleCheck } from "react-icons/fa6";
 import { LuRefreshCcw } from "react-icons/lu";
+import CustomSpinner from '../../reusable-components/CustomSpinner'
 
 
 
@@ -47,6 +48,8 @@ const Register = () => {
     passwordError: false,
     confirmPasswordError: false
   })
+  const [loading, setLoading] = useState(false)
+
 
 
   useEffect(() => {
@@ -264,11 +267,13 @@ const Register = () => {
     }
 
     if (hasError) {
-      console.error("Validation failed: Fields cannot be empty or invalid");
       return;
     }
 
     try {
+
+      setLoading(true)
+
       const payload = {
         "firstname": signupInputs?.firstName?.trim(),
         "lastname": signupInputs?.lastName?.trim(),
@@ -280,15 +285,19 @@ const Register = () => {
 
       const response = await axiosInstance.post('/signup', payload);
       if (response.data.error_code === 200) {
+        setLoading(false)
         navigate("/");
         toast.success(response.data.message);
       } else if (response.data.error_code === 409) {
+        setLoading(false)
         toast.warn(response.data.message);
       } else {
+        setLoading(false)
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error(response.data.message);
+      setLoading(false)
+      toast.error(error.message);
     }
   };
 
@@ -468,9 +477,6 @@ const Register = () => {
                               ...prevState,
                               password: pass,
                             }));
-                            // setTimeout(() => {
-                            //   setSuggestedPasswordsContainer(false);
-                            // }, 100); 
                           }}
                         >
                           {pass}
@@ -507,10 +513,8 @@ const Register = () => {
                 </div>
               </div>
 
-
-
               <CustomButton
-                buttonName="Register"
+                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Register"}
                 className="btn custom-button mt-5  mx-auto d-block w-100 "
                 onClick={handleSignup}
               />
