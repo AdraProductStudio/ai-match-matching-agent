@@ -62,7 +62,7 @@ const ForgotPassword = () => {
             const response = await axiosInstance.post('/forgot_password', payload);
             if (response.data.error_code === 200) {
                 setLoading(false)
-                Cookies.set("forgot_password_email", email)
+                sessionStorage.setItem("forgot_password_email", email)
                 toast.success(response.data.message);
             } else if (response.data.error_code === 409) {
                 setLoading(false)

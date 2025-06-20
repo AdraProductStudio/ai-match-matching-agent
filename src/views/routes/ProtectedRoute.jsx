@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import Cookies from "js-cookie";
 
 const authUser = () => {
-  if (Cookies.get("accessToken")) {
+  if (sessionStorage.getItem("accessToken")) {
     return true
   }
   return false

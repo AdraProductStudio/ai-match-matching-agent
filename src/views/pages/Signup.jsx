@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Card, Col, Container, Row } from 'react-bootstrap'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -11,6 +11,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import sha256 from 'sha256';
 import { toast } from 'react-toastify'
 import { FaCircleCheck } from "react-icons/fa6";
+import { LuRefreshCcw } from "react-icons/lu";
+
 
 
 
@@ -23,9 +25,15 @@ const Signup = () => {
 
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [suggestedPasswords, setSuggestedPasswords] = useState([]);
+  const suggestionRef = useRef(null);
+  const inputRef = useRef(null);
+  const [suggestedPasswordsContainer, setSuggestedPasswordsContainer] = useState(false)
+  const [regeneratePasswords, setRegeneratePasswords] = useState(false)
   const [signupInputs, setSignupInputs] = useState({})
   const [emailVerified, setEmailVerified] = useState(false)
   const [emailVerifying, setEmailVerifying] = useState(false)
+  const [verifiedEmail, setVerifiedEmail] = useState("")
   const [errorMessage, setErrorMessage] = useState({
     firstNameErrorMessage: "",
     lastNameErrorMessage: "",
@@ -42,6 +50,31 @@ const Signup = () => {
     passwordError: false,
     confirmPasswordError: false
   })
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        suggestionRef.current &&
+        !suggestionRef.current.contains(event.target) &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target)
+      ) {
+        setSuggestedPasswordsContainer(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
+  useEffect(() => {
+    const result = strongPasswords(3, 12, 16);
+    setSuggestedPasswords(result);
+  }, [regeneratePasswords]);
 
   const handleShowPassword = (name) => {
     switch (name) {
@@ -63,6 +96,13 @@ const Signup = () => {
       phoneNumber: 10
     };
     if (maxLengths[name] && value.length > maxLengths[name]) return;
+
+    if (name === "email") {
+      console.log("value", value)
+      if (value !== verifiedEmail) {
+        setEmailVerified(false)
+      }
+    }
 
     setSignupInputs((prevState) => (
       { ...prevState, [name]: value }
@@ -116,6 +156,9 @@ const Signup = () => {
       if (response.data.error_code === 200) {
         setEmailVerifying(false)
         setEmailVerified(true)
+        setVerifiedEmail(response.data.data.verified_email)
+        setError(prev => ({ ...prev, emailError: false }));
+        setErrorMessage(prev => ({ ...prev, emailErrorMessage: "" }));
         toast.success(response.data.message);
       } else {
         setEmailVerifying(false)
@@ -131,6 +174,7 @@ const Signup = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email)
   }
+
 
   const validatePassword = (password) => {
     const minLengthCheck = password.length >= 8;
@@ -170,6 +214,14 @@ const Signup = () => {
     } else if (!validateEmail(email)) {
       setError(prev => ({ ...prev, emailError: true }));
       setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please enter a valid email" }));
+      hasError = true;
+    } else if (!emailVerified) {
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please check if the email is available" }));
+      hasError = true;
+    } else if (email !== verifiedEmail) {
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please check if the email is available" }));
       hasError = true;
     }
 
@@ -231,6 +283,42 @@ const Signup = () => {
       toast.error(response.data.message);
     }
   };
+
+  const strongPasswords = function generateMultipleStrongPasswords(count, min, max) {
+    const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lower = "abcdefghijklmnopqrstuvwxyz";
+    const digits = "0123456789";
+    const special = "@$!%*?&#";
+    const all = upper + lower + digits + special;
+
+    const getRandom = (chars) => chars[Math.floor(Math.random() * chars.length)];
+
+    const generatePassword = (length) => {
+      if (length < 4) throw new Error("Minimum length must be at least 4");
+
+      let password = [
+        getRandom(upper),
+        getRandom(lower),
+        getRandom(digits),
+        getRandom(special)
+      ];
+
+      for (let i = 4; i < length; i++) {
+        password.push(getRandom(all));
+      }
+
+      return password.sort(() => 0.5 - Math.random()).join('');
+    };
+
+    const passwords = [];
+    for (let i = 0; i < count; i++) {
+      const randomLength = Math.floor(Math.random() * (max - min + 1)) + min;
+      passwords.push(generatePassword(randomLength));
+    }
+
+    return passwords;
+  }
+
 
 
   return (
@@ -297,14 +385,20 @@ const Signup = () => {
                       value={signupInputs?.email || ""}
                       className="mb-2 position-relative"
                     />
-                    <div className='position-absolute verify-icon cup' onClick={handleVerifyEmail}>
-                      <FaCircleCheck
-                        size={20}
-                        className={emailVerifying ? 'email-verifying-icon' : emailVerified ? 'email-verified-icon' : error.emailError ? 'email-verify-warning-icon' : 'email-verify-icon'}
-                      />
-                    </div>
+                    {
+                      signupInputs.email &&
+                      <div className={`position-absolute verify-icon cup ${emailVerified && 'pe-none'}`} onClick={handleVerifyEmail}>
+                        <FaCircleCheck
+                          title='Check Email Availability'
+                          size={20}
+                          className={
+                            emailVerifying ? 'email-verifying-icon' : emailVerified && (signupInputs?.email === verifiedEmail) ?
+                              'email-verified-icon' : error.emailError ?
+                                'email-verify-warning-icon' : 'email-verify-icon'}
+                        />
+                      </div>
+                    }
                   </div>
-
                   {
                     error.emailError &&
                     <p className="text-danger">{errorMessage.emailErrorMessage}</p>
@@ -328,7 +422,7 @@ const Signup = () => {
                 </div>
               </div>
               <div className="row">
-                <div className="mb-3 col-12 col-xl-6">
+                <div className="mb-3 col-12 col-xl-6" ref={inputRef}>
                   <CustomInputGroup
                     inputLabel="Password"
                     type={showPassword ? "text" : "password"}
@@ -340,7 +434,42 @@ const Signup = () => {
                     onChange={handleSignupInputs}
                     value={signupInputs?.password || ""}
                     className="mb-2"
+                    onFocus={() => setSuggestedPasswordsContainer(true)}
                   />
+                  <div
+                    className={`mt-3 suggested-passwords-container ${suggestedPasswordsContainer ? 'show' : ''}`}
+                    ref={suggestionRef}
+                  >
+                    <label className="form-label mb-3 small">
+                      Suggested Passwords : &nbsp;
+                      <LuRefreshCcw
+                        title='Regenerate passwords'
+                        className="custom-primary-light reload-passwords-icons cup"
+                        onClick={() => setRegeneratePasswords(!regeneratePasswords)}
+                      />
+                    </label>
+                    <ul className="list-unstyled d-flex flex-wrap gap-3">
+                      {suggestedPasswords.map((pass, idx) => (
+                        <li
+                          key={idx}
+                          className="bg-dark text-light py-1 px-3 rounded-2 small user-select-all border border-secondary cup"
+                          onClick={() => {
+                            setSignupInputs((prevState) => ({
+                              ...prevState,
+                              password: pass,
+                            }));
+                            // setTimeout(() => {
+                            //   setSuggestedPasswordsContainer(false);
+                            // }, 100); 
+                          }}
+                        >
+                          {pass}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+
                   {
                     error.passwordError &&
                     <p className="text-danger">{errorMessage.passwordErrorMessage}</p>
@@ -366,6 +495,8 @@ const Signup = () => {
                   }
                 </div>
               </div>
+
+
 
               <CustomButton
                 buttonName="Register"

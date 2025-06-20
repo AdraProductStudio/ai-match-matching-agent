@@ -50,8 +50,8 @@ const ResetPassword = () => {
         const emailFromToken = payload.sub;
 
         if (emailFromToken) {
-            Cookies.set("forgot_password_email", emailFromToken);
-            Cookies.set("reset_password_token", token);
+            sessionStorage.setItem("forgot_password_email", emailFromToken);
+            sessionStorage.setItem("reset_password_token", token);
             setEmail(emailFromToken); // Update state for input
         }
 
@@ -150,7 +150,7 @@ const ResetPassword = () => {
             setLoading(true)
 
             const payload = {
-                "token": Cookies.get("reset_password_token"),
+                "token": sessionStorage.getItem("reset_password_token"),
                 "new_password": sha256(resetInputs?.password?.trim()),
                 "confirm_password": sha256(resetInputs?.confirmPassword?.trim()),
             };

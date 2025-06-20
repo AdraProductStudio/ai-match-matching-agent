@@ -16,7 +16,6 @@ import CustomSpinner from '../../reusable-components/CustomSpinner';
 const Header = ({ currentPage }) => {
     const navigate = useNavigate()
 
-    const [loading, setLoading] = useState(false)
     const [isMobileScreen, setIsMobileScreen] = useState(window.innerWidth < 576);
     const [logoutModal, setLogoutModal] = useState(false)
     const [logoutLoading, setLogoutLoading] = useState(false)
@@ -32,27 +31,31 @@ const Header = ({ currentPage }) => {
 
     const handleLogout = async () => {
         try {
-            setLoading(true)
+            setLogoutLoading(true)
+            sessionStorage.setItem("is_logged_in", "false");
+
             let payload;
             payload = {
-                "msg": "",
-                "flag": "close",
-                "phone_number": Cookies.get("phone_number")
+                session_token: sessionStorage.getItem("session_token")
             }
 
-            const response = await axiosInstance.post("/chatbot_widget", payload);
+            const response = await axiosInstance.post("/logout", payload);
+
             if (response.data.error_code === 200) {
-                setLoading(false)
-                setLogoutModal(false);
+                setLogoutModal(false)
+                sessionStorage.removeItem("accessToken")
+                sessionStorage.removeItem("session_token")
+                sessionStorage.removeItem("phone_number")
+                sessionStorage.removeItem("is_logged_in");
+                setLogoutLoading(false)
                 navigate("/");
-                Cookies.remove("accessToken")
-                Cookies.remove("phone_number")
             } else {
-                setLoading(false)
+                setLogoutLoading(false)
+                console.log(response.data.message)
             }
         } catch (error) {
-            setLoading(false)
-            console.log(error.message)
+            setLogoutLoading(false)
+            console.log(error)
         }
     }
 
@@ -62,13 +65,13 @@ const Header = ({ currentPage }) => {
             payload = {
                 "msg": "",
                 "flag": "close",
-                "phone_number": Cookies.get("phone_number")
+                "phone_number": sessionStorage.getItem("phone_number")
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
             if (response.data.error_code === 200) {
-                Cookies.remove("accessToken")
-                Cookies.remove("phone_number")
+                sessionStorage.removeItem("accessToken")
+                sessionStorage.removeItem("phone_number")
                 navigate("/");
             } else {
                 console.log(response.data.message)
@@ -98,7 +101,7 @@ const Header = ({ currentPage }) => {
                                     <CustomButton
                                         buttonName={
 
-                                            <div className={`d-flex align-items-center gap-2 ${loading && 'pe-none opacity-50'}`}>
+                                            <div className={`d-flex align-items-center gap-2 ${logoutLoading && 'pe-none opacity-50'}`}>
                                                 {
                                                     isMobileScreen ?
                                                         <RiLogoutBoxLine size={16} />
@@ -150,7 +153,7 @@ const Header = ({ currentPage }) => {
                         />
                         <CustomButton
                             buttonName={
-                                loading ?
+                                logoutLoading ?
                                     <CustomSpinner variant="light" size="sm" /> :
                                     "Logout"
                             }

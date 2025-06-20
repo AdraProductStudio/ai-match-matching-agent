@@ -13,8 +13,16 @@
   --custom-grey2: #747474;
   --custom-button-bg: #2a5597;
   --custom-button-hover: rgb(5, 43, 96);
-  --custom-primary: #1859ff;
+  --custom-primary: #BD33DF;
   --custom-success: #259a54;
+}
+
+.custom-primary {
+  color: #BD33DF;
+}
+
+.custom-primary-light {
+  color: #e166ff;
 }
 
 
@@ -35,8 +43,16 @@ body {
   -ms-overflow-style: none;
 }
 
+.fs-12 {
+  font-size: 12px;
+}
+
 .fs-14 {
   font-size: 14px;
+}
+
+.mb-35 {
+  margin-bottom: 35px;
 }
 
 input[type='password']::placeholder,
@@ -85,7 +101,6 @@ input[type='number']::placeholder {
   margin-bottom: 10vh;
   height: 75%;
   overflow-y: scroll;
-
 }
 
 .forgot-password-container {
@@ -118,6 +133,32 @@ input[type='number']::placeholder {
   background: url('../assets/images/chat-container-bg.png') rgba(211, 211, 211, 0.181) 0% 0% / 100px 100px repeat;
   margin-bottom: 10vh;
 }
+
+.reload-passwords-icons:hover {
+  transition: all 0.4s ease-in-out;
+}
+
+.reload-passwords-icons:hover {
+  color: var(--custom-primary);
+}
+
+.suggested-passwords-container {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(10px);
+  transition: all 0.8s ease-in-out;
+  pointer-events: none;
+}
+
+.suggested-passwords-container.show {
+  opacity: 1;
+  max-height: 500px;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+
 
 .page-not-found-container {
   margin-top: -10vh;
@@ -189,7 +230,7 @@ input[type="number"] {
 }
 
 .email-verifying-icon {
-  animation: hueSpin 2s linear infinite;
+  animation: hueSpin 1s linear infinite;
   display: inline-block;
   will-change: filter;
   color: red;
@@ -205,9 +246,17 @@ input[type="number"] {
 }
 
 @keyframes hueSpin {
-  0%   { color: grey; }   /* orange */
-  50%  { color: #BD33DF; }     /* green */
-  100% { color: grey; }   /* orange again to loop */
+  0% {
+    color: rgb(0, 0, 0);
+  }
+
+  50% {
+    color: #BD33DF;
+  }
+
+  100% {
+    color: rgb(0, 0, 0);
+  }
 }
 
 .signup-login-navigation-link:hover {
@@ -395,6 +444,7 @@ input[type="number"] {
   .btn.cancel-button {
     font-size: 0.875rem;
   }
+
 }
 
 @media (max-width: 991px) {
