@@ -195,6 +195,7 @@ const Login = () => {
                   value={loginInputs.password || ""}
                   className="mb-2 "
                   onKeyDown={handleKeyDown}
+                  maxLength={16}
                 />
                 {
                   error.passwordError &&

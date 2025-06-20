@@ -16,10 +16,7 @@ import { LuRefreshCcw } from "react-icons/lu";
 
 
 
-
-
-
-const Signup = () => {
+const Register = () => {
 
   const navigate = useNavigate()
 
@@ -150,7 +147,6 @@ const Signup = () => {
         "email": signupInputs?.email?.trim(),
       };
       const response = await axiosInstance.post('/verify_email', payload);
-      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       console.log("response.data", response.data)
       if (response.data.error_code === 200) {
@@ -216,10 +212,24 @@ const Signup = () => {
       setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please enter a valid email" }));
       hasError = true;
     } else if (!emailVerified) {
+      setTimeout(() => {
+        const iconEl = document.getElementById('email-verify-icon');
+        if (iconEl) {
+          iconEl.classList.add("email-verify-icon-boom");
+          setTimeout(() => iconEl.classList.remove("email-verify-icon-boom"), 1000);
+        }
+      }, 0);
       setError(prev => ({ ...prev, emailError: true }));
       setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please check if the email is available" }));
       hasError = true;
     } else if (email !== verifiedEmail) {
+      setTimeout(() => {
+        const iconEl = document.getElementById('email-verify-icon');
+        if (iconEl) {
+          iconEl.classList.add("email-verify-icon-boom");
+          setTimeout(() => iconEl.classList.remove("email-verify-icon-boom"), 1000);
+        }
+      }, 0);
       setError(prev => ({ ...prev, emailError: true }));
       setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please check if the email is available" }));
       hasError = true;
@@ -389,6 +399,7 @@ const Signup = () => {
                       signupInputs.email &&
                       <div className={`position-absolute verify-icon cup ${emailVerified && 'pe-none'}`} onClick={handleVerifyEmail}>
                         <FaCircleCheck
+                          id='email-verify-icon'
                           title='Check Email Availability'
                           size={20}
                           className={
@@ -428,6 +439,7 @@ const Signup = () => {
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
+                    maxLength={16}
                     onClick={() => handleShowPassword("password")}
                     showPassword={showPassword}
                     placeholder="Enter password"
@@ -488,6 +500,7 @@ const Signup = () => {
                     value={signupInputs?.confirmPassword || ""}
                     className="mb-2"
                     onKeyDown={handleKeyDown}
+                    maxLength={16}
                   />
                   {
                     error.confirmPasswordError &&
@@ -518,5 +531,5 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default Register
 

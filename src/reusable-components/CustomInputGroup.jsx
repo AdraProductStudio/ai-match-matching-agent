@@ -34,7 +34,8 @@ const CustomInputGroup = ({
     onChange,
     onKeyDown,
     autoFocus,
-    onFocus
+    onFocus,
+    maxLength
 
 }) => {
 
@@ -59,6 +60,7 @@ const CustomInputGroup = ({
                     onBlur={onBlur}
                     autoFocus={autoFocus}
                     onFocus={onFocus}
+                    maxLength={maxLength}
                 />
                 <InputGroup.Text id="basic-addon1" className='cup eye-icon ' onClick={onClick}>
                     {showPassword === true ?
