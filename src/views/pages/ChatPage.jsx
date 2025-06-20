@@ -17,10 +17,9 @@ const ChatPage = () => {
     const [loading, setLoading] = useState(false)
     const [logoutLoading, setLogoutLoading] = useState(false)
     const [userInputMessage, setUserInputMessage] = useState("");
+    const [isCurrentConversationClosed, setIsCurrentConversationClosed] = useState(false)
     const timeouts = useRef([]);
-    const isLoggedInRef = useRef(true);
-
-    let loopTimeoutRef = useRef(null);
+    const loopTimeoutRef = useRef(null);
     const scrollViewRef = useRef(null);
     const [newChatModal, setNewChatModal] = useState(false)
     const navigate = useNavigate()
@@ -28,6 +27,12 @@ const ChatPage = () => {
     const [isMobileScreen, setIsMobileScreen] = useState(window.innerWidth < 576);
 
 
+
+    useEffect(() => {
+        if (sessionStorage.getItem("is_logged_in") === null) {
+            sessionStorage.setItem("is_logged_in", "true");
+        }
+    }, []);
 
     // useEffect(() => {
     //     const handleVisibilityChange = () => {
@@ -60,7 +65,7 @@ const ChatPage = () => {
             payload = {
                 "msg": "",
                 "flag": "close",
-                "phone_number": Cookies.get("phone_number")
+                "phone_number": sessionStorage.getItem("phone_number")
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
@@ -114,6 +119,8 @@ const ChatPage = () => {
     }, [])
 
     const handleSendMessage = async (text, value, flag) => {
+        if (sessionStorage.getItem("is_logged_in") !== "true") return;
+
         try {
             const desktopTextarea = document.getElementById('chat-textarea-field-desktop');
             const mobileTextarea = document.getElementById('chat-textarea-field-mobile');
@@ -125,7 +132,8 @@ const ChatPage = () => {
             const payload = {
                 msg: text.trim(),
                 flag: flag,
-                phone_number: Cookies.get("phone_number")
+                phone_number: sessionStorage.getItem("phone_number"),
+                session_token: sessionStorage.getItem("session_token")
             };
 
             timeouts.current.forEach(clearTimeout);
@@ -151,6 +159,8 @@ const ChatPage = () => {
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
+
+
             const data = response?.data;
             const responseMessage = data?.data?.message;
             const isEmptyData = data?.error_code === 200 && Object.keys(data?.data || {}).length === 0;
@@ -178,8 +188,8 @@ const ChatPage = () => {
                 }
 
                 if (responseMessage === "Your chat has been closed.") {
-                    clearTimeout(loopTimeoutRef);
-                    loopTimeoutRef = null;
+                    clearTimeout(loopTimeoutRef.current);
+                    loopTimeoutRef.current = null;
                     handleSessionClose("close")
                     setNewChatModal(true)
                     return;
@@ -200,11 +210,16 @@ const ChatPage = () => {
                 if (responseMessage === "Your chat has been closed.") {
                     handleSessionClose("close")
                     setNewChatModal(true)
-                    clearTimeout(loopTimeoutRef);
-                    loopTimeoutRef = null;
+                    clearTimeout(loopTimeoutRef.current);
+                    loopTimeoutRef.current = null;
                     return;
                 }
-            } else {
+            }
+            else if (data?.error_code === 409) {
+                handleSessionClose("close")
+                setIsCurrentConversationClosed(true)
+            }
+            else {
                 updateBotMessage({ text: data?.data?.message || "Unexpected error occurred.", user: false, time: currentTime(new Date()) });
             }
         } catch (error) {
@@ -219,8 +234,8 @@ const ChatPage = () => {
 
     const resetIdleTracking = (mode) => {
         if (loopTimeoutRef) {
-            clearTimeout(loopTimeoutRef);
-            loopTimeoutRef = null;
+            clearTimeout(loopTimeoutRef.current);
+            loopTimeoutRef.current = null;
         }
 
         if (mode === "close") {
@@ -231,15 +246,15 @@ const ChatPage = () => {
     };
 
     const startIdleTracking = (mode) => {
-        if (!isLoggedInRef.current) return; // 🚫 Stop if user logged out
+        if (sessionStorage.getItem("is_logged_in") !== "true") return;
 
         if (mode === "close") {
             setUserInputMessage("");
             return;
         }
 
-        loopTimeoutRef = setTimeout(async () => {
-            if (!isLoggedInRef.current) return; // 🚫 Prevent call if logged out
+        loopTimeoutRef.current = setTimeout(async () => {
+            if (sessionStorage.getItem("is_logged_in") !== "true") return;
 
             const response = await handleSendMessage("", "", "step");
             if (response && typeof response === "string" && response.trim() !== "") {
@@ -247,6 +262,7 @@ const ChatPage = () => {
             }
         }, 60000);
     };
+
 
 
     const handleKeyDown = (e) => {
@@ -280,7 +296,8 @@ const ChatPage = () => {
             payload = {
                 "msg": "",
                 "flag": flag,
-                "phone_number": Cookies.get("phone_number")
+                "phone_number": sessionStorage.getItem("phone_number"),
+                session_token: sessionStorage.getItem("session_token")
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
@@ -294,38 +311,45 @@ const ChatPage = () => {
 
     const handleLogout = async () => {
         try {
-            setLogoutLoading(true)
-            let payload;
-            payload = {
-                "msg": "",
-                "flag": "close",
-                "phone_number": Cookies.get("phone_number")
+            setLogoutLoading(true);
+
+            if (loopTimeoutRef) {
+                clearTimeout(loopTimeoutRef.current);
+                loopTimeoutRef.current = null;
             }
 
-            const response = await axiosInstance.post("/chatbot_widget", payload);
-            if (response.data.error_code === 200) {
-                      isLoggedInRef.current = false;
+            sessionStorage.setItem("is_logged_in", "false"); // instead of ref
 
-                setLogoutLoading(false)
+            const payload = {
+                session_token: sessionStorage.getItem("session_token")
+            };
+
+            const response = await axiosInstance.post("/logout", payload);
+
+            if (response.data.error_code === 200) {
+                setLogoutLoading(false);
                 setNewChatModal(false);
                 navigate("/");
-                Cookies.remove("accessToken")
-                Cookies.remove("phone_number")
+                sessionStorage.removeItem("accessToken");
+                sessionStorage.removeItem("session_token");
+                sessionStorage.removeItem("phone_number");
+                sessionStorage.removeItem("is_logged_in");
             } else {
-                setLogoutLoading(false)
-                console.log(response.data.message)
+                setLogoutLoading(false);
+                console.log(response.data.message);
             }
         } catch (error) {
-            setLogoutLoading(false)
-            console.log(error)
+            setLogoutLoading(false);
+            console.log(error);
         }
     }
+
 
     return (
 
         <>
             {
-                window.innerWidth > 576 ?
+                !isMobileScreen ?
                     <section className='chatpage-component'>
 
                         <Header currentPage="ChatPage" />
@@ -483,9 +507,27 @@ const ChatPage = () => {
 
                             </Modal.Body>
                         </Modal>
+
+                        <Modal
+                            show={isCurrentConversationClosed}
+                            onHide={() => setIsCurrentConversationClosed(false)}
+                            size="md"
+                            aria-labelledby="contained-modal-title-vcenter"
+                            centered
+                            backdrop="static"
+                        >
+                            <Modal.Body >
+                                <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Session closed</h3>
+                                <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: '16px' }}>
+                                    A new session has been started, so this one has been closed. Please continue in your latest chat window.
+                                </p>
+
+                            </Modal.Body>
+                        </Modal>
+
                     </section>
                     :
-
+                    // window.innerWidth < 576 ?
                     <section className='chatpage-component bg-dark'>
                         <div className="left-purple-ball">
                         </div>
@@ -631,14 +673,14 @@ const ChatPage = () => {
                         >
                             <Modal.Body >
                                 <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Inactive Session Notice</h3>
-                                <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: '16px' }}>
+                                <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: '14px' }}>
                                     The previous session has timed out due to inactivity. Kindly initiate a new conversation to proceed.
                                 </p>
 
                                 <div className="mx-2 my-3 text-center">
                                     <CustomButton
                                         buttonName="Start New Conversation"
-                                        className={`px-3 mt-4 w-50 btn logout-button mx-auto d-block mb-4 ${logoutLoading ? 'pe-none opacity-50' : ""}`}
+                                        className={`px-3 mt-4 btn logout-button mx-auto d-block mb-4 ${logoutLoading ? 'pe-none opacity-50' : ""}`}
                                         onClick={() => {
                                             handleSendMessage("", "", "init");
                                             setNewChatModal(false);
@@ -666,6 +708,40 @@ const ChatPage = () => {
                                         onClick={handleLogout}
                                     />
                                 </div>
+
+                            </Modal.Body>
+                        </Modal>
+
+                        <Modal
+                            show={isCurrentConversationClosed}
+                            onHide={() => setIsCurrentConversationClosed(false)}
+                            size="md"
+                            aria-labelledby="contained-modal-title-vcenter"
+                            centered
+                            backdrop="static"
+                        >
+                            <Modal.Body >
+                                <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Session closed</h3>
+                                <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: '16px' }}>
+                                    A new session has been started, so this one has been closed. Please continue in your latest chat window.
+                                </p>
+
+                            </Modal.Body>
+                        </Modal>
+
+                        <Modal
+                            show={isCurrentConversationClosed}
+                            onHide={() => setIsCurrentConversationClosed(false)}
+                            size="md"
+                            aria-labelledby="contained-modal-title-vcenter"
+                            centered
+                            backdrop="static"
+                        >
+                            <Modal.Body >
+                                <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Session closed</h3>
+                                <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: '16px' }}>
+                                    A new session has been started, so this one has been closed. Please continue in your latest chat window.
+                                </p>
 
                             </Modal.Body>
                         </Modal>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Card, Col, Container, Row } from 'react-bootstrap'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -10,18 +10,28 @@ import axiosInstance from '../../services/axiosInstance'
 import { useDispatch, useSelector } from 'react-redux'
 import sha256 from 'sha256';
 import { toast } from 'react-toastify'
+import { FaCircleCheck } from "react-icons/fa6";
+import { LuRefreshCcw } from "react-icons/lu";
+import CustomSpinner from '../../reusable-components/CustomSpinner'
 
 
 
 
-
-const Signup = () => {
+const Register = () => {
 
   const navigate = useNavigate()
 
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [suggestedPasswords, setSuggestedPasswords] = useState([]);
+  const suggestionRef = useRef(null);
+  const inputRef = useRef(null);
+  const [suggestedPasswordsContainer, setSuggestedPasswordsContainer] = useState(false)
+  const [regeneratePasswords, setRegeneratePasswords] = useState(false)
   const [signupInputs, setSignupInputs] = useState({})
+  const [emailVerified, setEmailVerified] = useState(false)
+  const [emailVerifying, setEmailVerifying] = useState(false)
+  const [verifiedEmail, setVerifiedEmail] = useState("")
   const [errorMessage, setErrorMessage] = useState({
     firstNameErrorMessage: "",
     lastNameErrorMessage: "",
@@ -38,6 +48,33 @@ const Signup = () => {
     passwordError: false,
     confirmPasswordError: false
   })
+  const [loading, setLoading] = useState(false)
+
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        suggestionRef.current &&
+        !suggestionRef.current.contains(event.target) &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target)
+      ) {
+        setSuggestedPasswordsContainer(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
+  useEffect(() => {
+    const result = strongPasswords(3, 12, 16);
+    setSuggestedPasswords(result);
+  }, [regeneratePasswords]);
 
   const handleShowPassword = (name) => {
     switch (name) {
@@ -59,6 +96,12 @@ const Signup = () => {
       phoneNumber: 10
     };
     if (maxLengths[name] && value.length > maxLengths[name]) return;
+
+    if (name === "email") {
+      if (value !== verifiedEmail) {
+        setEmailVerified(false)
+      }
+    }
 
     setSignupInputs((prevState) => (
       { ...prevState, [name]: value }
@@ -82,11 +125,53 @@ const Signup = () => {
     }
   };
 
+  const handleVerifyEmail = async () => {
+    let hasError = false;
+    const email = signupInputs?.email?.trim() || "";
+    if (!email) {
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Email should not be empty" }));
+      hasError = true;
+    } else if (!validateEmail(email)) {
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please enter a valid email" }));
+      hasError = true;
+    }
+    if (hasError) {
+      console.error("Email Validation failed");
+      return;
+    }
+    try {
+
+      setEmailVerifying(true)
+
+      const payload = {
+        "email": signupInputs?.email?.trim(),
+      };
+      const response = await axiosInstance.post('/verify_email', payload);
+
+      if (response.data.error_code === 200) {
+        setEmailVerifying(false)
+        setEmailVerified(true)
+        setVerifiedEmail(response.data.data.verified_email)
+        setError(prev => ({ ...prev, emailError: false }));
+        setErrorMessage(prev => ({ ...prev, emailErrorMessage: "" }));
+        toast.success(response.data.message);
+      } else {
+        setEmailVerifying(false)
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      setEmailVerifying(false)
+      toast.error(error.message);
+    }
+  }
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email)
   }
+
 
   const validatePassword = (password) => {
     const minLengthCheck = password.length >= 8;
@@ -127,6 +212,28 @@ const Signup = () => {
       setError(prev => ({ ...prev, emailError: true }));
       setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please enter a valid email" }));
       hasError = true;
+    } else if (!emailVerified) {
+      setTimeout(() => {
+        const iconEl = document.getElementById('email-verify-icon');
+        if (iconEl) {
+          iconEl.classList.add("email-verify-icon-boom");
+          setTimeout(() => iconEl.classList.remove("email-verify-icon-boom"), 1000);
+        }
+      }, 0);
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please check if the email is available" }));
+      hasError = true;
+    } else if (email !== verifiedEmail) {
+      setTimeout(() => {
+        const iconEl = document.getElementById('email-verify-icon');
+        if (iconEl) {
+          iconEl.classList.add("email-verify-icon-boom");
+          setTimeout(() => iconEl.classList.remove("email-verify-icon-boom"), 1000);
+        }
+      }, 0);
+      setError(prev => ({ ...prev, emailError: true }));
+      setErrorMessage(prev => ({ ...prev, emailErrorMessage: "Please check if the email is available" }));
+      hasError = true;
     }
 
     if (!phone) {
@@ -160,11 +267,13 @@ const Signup = () => {
     }
 
     if (hasError) {
-      console.error("Validation failed: Fields cannot be empty or invalid");
       return;
     }
 
     try {
+
+      setLoading(true)
+
       const payload = {
         "firstname": signupInputs?.firstName?.trim(),
         "lastname": signupInputs?.lastName?.trim(),
@@ -176,17 +285,57 @@ const Signup = () => {
 
       const response = await axiosInstance.post('/signup', payload);
       if (response.data.error_code === 200) {
+        setLoading(false)
         navigate("/");
         toast.success(response.data.message);
       } else if (response.data.error_code === 409) {
+        setLoading(false)
         toast.warn(response.data.message);
       } else {
+        setLoading(false)
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error(response.data.message);
+      setLoading(false)
+      toast.error(error.message);
     }
   };
+
+  const strongPasswords = function generateMultipleStrongPasswords(count, min, max) {
+    const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lower = "abcdefghijklmnopqrstuvwxyz";
+    const digits = "0123456789";
+    const special = "@$!%*?&#";
+    const all = upper + lower + digits + special;
+
+    const getRandom = (chars) => chars[Math.floor(Math.random() * chars.length)];
+
+    const generatePassword = (length) => {
+      if (length < 4) throw new Error("Minimum length must be at least 4");
+
+      let password = [
+        getRandom(upper),
+        getRandom(lower),
+        getRandom(digits),
+        getRandom(special)
+      ];
+
+      for (let i = 4; i < length; i++) {
+        password.push(getRandom(all));
+      }
+
+      return password.sort(() => 0.5 - Math.random()).join('');
+    };
+
+    const passwords = [];
+    for (let i = 0; i < count; i++) {
+      const randomLength = Math.floor(Math.random() * (max - min + 1)) + min;
+      passwords.push(generatePassword(randomLength));
+    }
+
+    return passwords;
+  }
+
 
 
   return (
@@ -241,17 +390,33 @@ const Signup = () => {
                 </div>
               </div>
               <div className="row">
-                <div className="mb-3 col-12 col-xl-6">
-                  <CustomInput
-                    inputLabel="Email"
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Enter email"
-                    onChange={handleSignupInputs}
-                    value={signupInputs?.email || ""}
-                    className="mb-2"
-                  />
+                <div className="mb-3 col-12 col-xl-6 register-email-field ">
+                  <div className='position-relative'>
+                    <CustomInput
+                      inputLabel="Email"
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="Enter email"
+                      onChange={handleSignupInputs}
+                      value={signupInputs?.email || ""}
+                      className="mb-2 position-relative"
+                    />
+                    {
+                      signupInputs.email &&
+                      <div className={`position-absolute verify-icon cup ${emailVerified && 'pe-none'}`} onClick={handleVerifyEmail}>
+                        <FaCircleCheck
+                          id='email-verify-icon'
+                          title='Check Email Availability'
+                          size={20}
+                          className={
+                            emailVerifying ? 'email-verifying-icon' : emailVerified && (signupInputs?.email === verifiedEmail) ?
+                              'email-verified-icon' : error.emailError ?
+                                'email-verify-warning-icon' : 'email-verify-icon'}
+                        />
+                      </div>
+                    }
+                  </div>
                   {
                     error.emailError &&
                     <p className="text-danger">{errorMessage.emailErrorMessage}</p>
@@ -275,19 +440,52 @@ const Signup = () => {
                 </div>
               </div>
               <div className="row">
-                <div className="mb-3 col-12 col-xl-6">
+                <div className="mb-3 col-12 col-xl-6" ref={inputRef}>
                   <CustomInputGroup
                     inputLabel="Password"
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
+                    maxLength={16}
                     onClick={() => handleShowPassword("password")}
                     showPassword={showPassword}
                     placeholder="Enter password"
                     onChange={handleSignupInputs}
                     value={signupInputs?.password || ""}
                     className="mb-2"
+                    onFocus={() => setSuggestedPasswordsContainer(true)}
                   />
+                  <div
+                    className={`mt-3 suggested-passwords-container ${suggestedPasswordsContainer ? 'show' : ''}`}
+                    ref={suggestionRef}
+                  >
+                    <label className="form-label mb-3 small">
+                      Suggested Passwords : &nbsp;
+                      <LuRefreshCcw
+                        title='Regenerate passwords'
+                        className="custom-primary-light reload-passwords-icons cup"
+                        onClick={() => setRegeneratePasswords(!regeneratePasswords)}
+                      />
+                    </label>
+                    <ul className="list-unstyled d-flex flex-wrap gap-3">
+                      {suggestedPasswords.map((pass, idx) => (
+                        <li
+                          key={idx}
+                          className="bg-dark text-light py-1 px-3 rounded-2 small user-select-all border border-secondary cup"
+                          onClick={() => {
+                            setSignupInputs((prevState) => ({
+                              ...prevState,
+                              password: pass,
+                            }));
+                          }}
+                        >
+                          {pass}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+
                   {
                     error.passwordError &&
                     <p className="text-danger">{errorMessage.passwordErrorMessage}</p>
@@ -306,6 +504,7 @@ const Signup = () => {
                     value={signupInputs?.confirmPassword || ""}
                     className="mb-2"
                     onKeyDown={handleKeyDown}
+                    maxLength={16}
                   />
                   {
                     error.confirmPasswordError &&
@@ -315,7 +514,7 @@ const Signup = () => {
               </div>
 
               <CustomButton
-                buttonName="Register"
+                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Register"}
                 className="btn custom-button mt-5  mx-auto d-block w-100 "
                 onClick={handleSignup}
               />
@@ -334,5 +533,5 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default Register
 

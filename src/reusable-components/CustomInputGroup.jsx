@@ -33,7 +33,9 @@ const CustomInputGroup = ({
     onBlur,
     onChange,
     onKeyDown,
-    autoFocus
+    autoFocus,
+    onFocus,
+    maxLength
 
 }) => {
 
@@ -57,11 +59,13 @@ const CustomInputGroup = ({
                     readOnly={readOnly}
                     onBlur={onBlur}
                     autoFocus={autoFocus}
+                    onFocus={onFocus}
+                    maxLength={maxLength}
                 />
-                <InputGroup.Text id="basic-addon1" className='cup eye-icon' onClick={onClick}>
+                <InputGroup.Text id="basic-addon1" className='cup eye-icon ' onClick={onClick}>
                     {showPassword === true ?
-                        <IoEye onClick={onClick} /> :
-                        <IoEyeOff onClick={onClick} />}
+                        <IoEye title='Hide password' className='custom-primary' size={23} onClick={onClick} /> :
+                        <IoEyeOff title='Show password' className='text-secondary' size={23} onClick={onClick} />}
                 </InputGroup.Text>
             </InputGroup>
         </>

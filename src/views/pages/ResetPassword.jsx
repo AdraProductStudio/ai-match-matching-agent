@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import Header from '../components/Header'
 import CustomInput from '../../reusable-components/CustomInput'
@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
 import sha256 from 'sha256';
 import CustomSpinner from '../../reusable-components/CustomSpinner'
 import Cookies from 'js-cookie';
+import { LuRefreshCcw } from "react-icons/lu";
 
 
 const ResetPassword = () => {
@@ -20,6 +21,11 @@ const ResetPassword = () => {
     const [email, setEmail] = useState("");
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [suggestedPasswords, setSuggestedPasswords] = useState([]);
+    const suggestionRef = useRef(null);
+    const inputRef = useRef(null);
+    const [suggestedPasswordsContainer, setSuggestedPasswordsContainer] = useState(false)
+    const [regeneratePasswords, setRegeneratePasswords] = useState(false)
     const [resetInputs, setResetInputs] = useState({})
     const [errorMessage, setErrorMessage] = useState({
         passwordErrorMessage: "",
@@ -29,6 +35,32 @@ const ResetPassword = () => {
         passwordError: false,
         confirmPasswordError: false
     })
+
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                suggestionRef.current &&
+                !suggestionRef.current.contains(event.target) &&
+                inputRef.current &&
+                !inputRef.current.contains(event.target)
+            ) {
+                setSuggestedPasswordsContainer(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+
+    useEffect(() => {
+        const result = strongPasswords(3, 12, 16);
+        setSuggestedPasswords(result);
+    }, [regeneratePasswords]);
 
     useEffect(() => {
         getEmailId();
@@ -50,8 +82,8 @@ const ResetPassword = () => {
         const emailFromToken = payload.sub;
 
         if (emailFromToken) {
-            Cookies.set("forgot_password_email", emailFromToken);
-            Cookies.set("reset_password_token", token);
+            sessionStorage.setItem("forgot_password_email", emailFromToken);
+            sessionStorage.setItem("reset_password_token", token);
             setEmail(emailFromToken); // Update state for input
         }
 
@@ -150,7 +182,7 @@ const ResetPassword = () => {
             setLoading(true)
 
             const payload = {
-                "token": Cookies.get("reset_password_token"),
+                "token": sessionStorage.getItem("reset_password_token"),
                 "new_password": sha256(resetInputs?.password?.trim()),
                 "confirm_password": sha256(resetInputs?.confirmPassword?.trim()),
             };
@@ -171,6 +203,41 @@ const ResetPassword = () => {
         }
     };
 
+
+    const strongPasswords = function generateMultipleStrongPasswords(count, min, max) {
+        const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lower = "abcdefghijklmnopqrstuvwxyz";
+        const digits = "0123456789";
+        const special = "@$!%*?&#";
+        const all = upper + lower + digits + special;
+
+        const getRandom = (chars) => chars[Math.floor(Math.random() * chars.length)];
+
+        const generatePassword = (length) => {
+            if (length < 4) throw new Error("Minimum length must be at least 4");
+
+            let password = [
+                getRandom(upper),
+                getRandom(lower),
+                getRandom(digits),
+                getRandom(special)
+            ];
+
+            for (let i = 4; i < length; i++) {
+                password.push(getRandom(all));
+            }
+
+            return password.sort(() => 0.5 - Math.random()).join('');
+        };
+
+        const passwords = [];
+        for (let i = 0; i < count; i++) {
+            const randomLength = Math.floor(Math.random() * (max - min + 1)) + min;
+            passwords.push(generatePassword(randomLength));
+        }
+
+        return passwords;
+    }
 
 
 
@@ -203,7 +270,7 @@ const ResetPassword = () => {
                                     />
                                 </div>
 
-                                <div className="mb-3 ">
+                                <div className="mb-3 " ref={inputRef}>
                                     <CustomInputGroup
                                         autoFocus={true}
                                         inputLabel="Password"
@@ -216,7 +283,38 @@ const ResetPassword = () => {
                                         onChange={handleResetInputs}
                                         value={resetInputs?.password || ""}
                                         className="mb-2"
+                                        onFocus={() => setSuggestedPasswordsContainer(true)}
+                                        maxLength={16}
                                     />
+                                    <div
+                                        className={`mt-3 suggested-passwords-container ${suggestedPasswordsContainer ? 'show' : ''}`}
+                                        ref={suggestionRef}
+                                    >
+                                        <label className="form-label mb-3 small">
+                                            Suggested Passwords : &nbsp;
+                                            <LuRefreshCcw
+                                                title='Regenerate passwords'
+                                                className="custom-primary-light reload-passwords-icons cup"
+                                                onClick={() => setRegeneratePasswords(!regeneratePasswords)}
+                                            />
+                                        </label>
+                                        <ul className="list-unstyled d-flex flex-wrap gap-3">
+                                            {suggestedPasswords.map((pass, idx) => (
+                                                <li
+                                                    key={idx}
+                                                    className="bg-dark text-light py-1 px-3 rounded-2 small user-select-all border border-secondary cup"
+                                                    onClick={() => {
+                                                        setResetInputs((prevState) => ({
+                                                            ...prevState,
+                                                            password: pass,
+                                                        }));
+                                                    }}
+                                                >
+                                                    {pass}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                     {
                                         error.passwordError &&
                                         <p className="text-danger">{errorMessage.passwordErrorMessage}</p>
@@ -235,6 +333,7 @@ const ResetPassword = () => {
                                         value={resetInputs?.confirmPassword || ""}
                                         className="mb-2"
                                         onKeyDown={handleKeyDown}
+                                        maxLength={16}
                                     />
                                     {
                                         error.confirmPasswordError &&

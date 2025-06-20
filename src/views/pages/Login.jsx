@@ -31,12 +31,12 @@ const Login = () => {
   })
 
   useEffect(() => {
-    const phone = Cookies.get("phone_number");
-    const token = Cookies.get("accessToken");
+    const phone = sessionStorage.getItem("phone_number");
+    const token = sessionStorage.getItem("accessToken");
 
     if (phone || token) {
-      Cookies.remove("phone_number");
-      Cookies.remove("accessToken");
+      sessionStorage.removeItem("phone_number");
+      sessionStorage.removeItem("accessToken");
     }
   }, []);
 
@@ -119,8 +119,9 @@ const Login = () => {
       });
 
       if (response.data.error_code === 200) {
-        Cookies.set("phone_number", `+91${loginInputs.phoneNumber}`)
-        Cookies.set("accessToken", response.data.data.token)
+        sessionStorage.setItem("phone_number", `+91${loginInputs.phoneNumber}`)
+        sessionStorage.setItem("accessToken", response.data.data.token)
+        sessionStorage.setItem("session_token", response.data.data.session_token)
         setTimeout(() => {
           setLoading(false)
           navigate('/chat')
@@ -158,7 +159,7 @@ const Login = () => {
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
           <Row className="login-container align-items-center  px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
             <Col className='my-4 '>
-              <h3 className='mb-5 text-center login-register-text '>Log In</h3>
+              <h3 className='mb-5 text-center login-register-text'>Log In</h3>
 
               <div className="mb-4">
                 <CustomInput
@@ -192,6 +193,7 @@ const Login = () => {
                   value={loginInputs.password || ""}
                   className="mb-2 "
                   onKeyDown={handleKeyDown}
+                  maxLength={16}
                 />
                 {
                   error.passwordError &&
