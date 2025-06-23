@@ -264,6 +264,9 @@ const Register = () => {
       setError(prev => ({ ...prev, confirmPasswordError: true }));
       setErrorMessage(prev => ({ ...prev, confirmPasswordErrorMessage: "Confirm password should match the password" }));
       hasError = true;
+    } else {
+      setError(prev => ({ ...prev, confirmPasswordError: false }));
+      setErrorMessage(prev => ({ ...prev, confirmPasswordErrorMessage: "" }));
     }
 
     if (hasError) {

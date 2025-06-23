@@ -7,7 +7,6 @@ import { Link} from 'react-router-dom'
 import axiosInstance from '../../services/axiosInstance'
 import { toast } from 'react-toastify'
 import CustomSpinner from '../../reusable-components/CustomSpinner'
-import Cookies from 'js-cookie';
 
 
 
@@ -47,7 +46,6 @@ const ForgotPassword = () => {
         }
 
         if (hasError) {
-            console.error("Validation failed: Fields cannot be empty");
             return;
         }
 
@@ -86,7 +84,7 @@ const ForgotPassword = () => {
 
 
     return (
-        <section className='layout' style={{ height: '100dvh', backgroundColor: 'pink' }}>
+        <section className='layout' style={{ height: '100dvh' }}>
             <Header />
             <div className="left-purple-ball">
             </div>

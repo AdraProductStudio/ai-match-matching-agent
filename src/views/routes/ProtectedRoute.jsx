@@ -1,6 +1,4 @@
-import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import Cookies from "js-cookie";
 
 const authUser = () => {
   if (sessionStorage.getItem("accessToken")) {

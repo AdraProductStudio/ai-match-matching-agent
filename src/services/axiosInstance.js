@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 
 
 const axiosInstance = axios.create({
@@ -8,7 +7,6 @@ const axiosInstance = axios.create({
         "Content-Type": "application/json",
         domain: import.meta.env.VITE_DOMAIN
     },
-    // withCredentials: true
 });
 
 axiosInstance.interceptors.request.use((config) => {
