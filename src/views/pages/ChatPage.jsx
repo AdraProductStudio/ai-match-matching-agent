@@ -3,7 +3,6 @@ import '../../stylesheets/ChatPage.css'
 import Header from '../components/Header'
 import { Container } from 'react-bootstrap';
 import axiosInstance from '../../services/axiosInstance';
-import Cookies from 'js-cookie';
 import Modal from 'react-bootstrap/Modal';
 import CustomButton from '../../reusable-components/CustomButton';
 import CustomSpinner from '../../reusable-components/CustomSpinner';
@@ -34,30 +33,11 @@ const ChatPage = () => {
         }
     }, []);
 
-    // useEffect(() => {
-    //     const handleVisibilityChange = () => {
-    //         if (document.visibilityState === 'hidden') {
-    //             handleSessionClose("close")
-    //             setNewChatModal(true)
-    //         }
-    //     };
-
-    //     document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    //     return () => {
-    //         document.removeEventListener('visibilitychange', handleVisibilityChange);
-    //     };
-    // }, []);
-
-
-
     useEffect(() => {
         const handleResize = () => setIsMobileScreen(window.innerWidth < 576);
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-
-
 
     useEffect(() => {
         const handleBeforeUnload = async (event) => {

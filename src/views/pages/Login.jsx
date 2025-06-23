@@ -8,7 +8,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import sha256 from 'sha256';
 import CustomSpinner from '../../reusable-components/CustomSpinner'
-import Cookies from 'js-cookie';
 import axios from 'axios'
 
 
@@ -96,7 +95,6 @@ const Login = () => {
     }
 
     if (hasError) {
-      console.error("Validation failed: Fields cannot be empty");
       return;
     }
 
@@ -115,7 +113,6 @@ const Login = () => {
           Authorization: basicAuth,
           domain: import.meta.env.VITE_DOMAIN,
         },
-        // withCredentials: true
       });
 
       if (response.data.error_code === 200) {
@@ -145,7 +142,7 @@ const Login = () => {
 
 
   return (
-    <section className='layout' style={{ height: '100dvh', backgroundColor: 'pink' }}>
+    <section className='layout' style={{ height: '100dvh'}}>
       <Header />
       <div className="left-purple-ball">
       </div>

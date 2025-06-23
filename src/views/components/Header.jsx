@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import CustomButton from '../../reusable-components/CustomButton';
 import Image from '../../utils/images'
 import { useNavigate } from 'react-router-dom';
-import { AiFillHome } from "react-icons/ai";
 import Modal from 'react-bootstrap/Modal';
 import { RiLogoutBoxLine } from "react-icons/ri";
-import Cookies from 'js-cookie';
 import axiosInstance from '../../services/axiosInstance';
 import CustomSpinner from '../../reusable-components/CustomSpinner';
 

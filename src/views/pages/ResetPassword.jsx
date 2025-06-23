@@ -9,7 +9,6 @@ import axiosInstance from '../../services/axiosInstance'
 import { toast } from 'react-toastify'
 import sha256 from 'sha256';
 import CustomSpinner from '../../reusable-components/CustomSpinner'
-import Cookies from 'js-cookie';
 import { LuRefreshCcw } from "react-icons/lu";
 
 
@@ -171,10 +170,12 @@ const ResetPassword = () => {
             setError(prev => ({ ...prev, confirmPasswordError: true }));
             setErrorMessage(prev => ({ ...prev, confirmPasswordErrorMessage: "Confirm password should match the password" }));
             hasError = true;
+        } else {
+            setError(prev => ({ ...prev, confirmPasswordError: false }));
+            setErrorMessage(prev => ({ ...prev, confirmPasswordErrorMessage: "" }));
         }
 
         if (hasError) {
-            console.error("Validation failed: Fields cannot be empty or invalid");
             return;
         }
 
@@ -242,7 +243,7 @@ const ResetPassword = () => {
 
 
     return (
-        <section className='layout' style={{ height: '100dvh', backgroundColor: 'pink' }}>
+        <section className='layout' style={{ height: '100dvh' }}>
             <Header />
             <div className="left-purple-ball">
             </div>
