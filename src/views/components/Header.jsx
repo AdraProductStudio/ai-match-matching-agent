@@ -43,7 +43,7 @@ const Header = ({ currentPage }) => {
                 setLogoutModal(false)
                 sessionStorage.removeItem("accessToken")
                 sessionStorage.removeItem("session_token")
-                sessionStorage.removeItem("phone_number")
+                sessionStorage.removeItem("email_or_phone")
                 sessionStorage.removeItem("is_logged_in");
                 setLogoutLoading(false)
                 navigate("/");
@@ -63,13 +63,13 @@ const Header = ({ currentPage }) => {
             payload = {
                 "msg": "",
                 "flag": "close",
-                "phone_number": sessionStorage.getItem("phone_number")
+                "email_or_phone": sessionStorage.getItem("email_or_phone")
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
             if (response.data.error_code === 200) {
                 sessionStorage.removeItem("accessToken")
-                sessionStorage.removeItem("phone_number")
+                sessionStorage.removeItem("email_or_phone")
                 navigate("/");
             } else {
                 console.log(response.data.message)

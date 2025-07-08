@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 import sha256 from 'sha256';
 import CustomSpinner from '../../reusable-components/CustomSpinner'
 import axios from 'axios'
+import axiosInstance from '../../services/axiosInstance'
 
 
 
@@ -18,6 +19,7 @@ const Login = () => {
   const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false)
+  const [loadingAction, setLoadingAction] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loginInputs, setLoginInputs] = useState({})
   const [errorMessage, setErrorMessage] = useState({
@@ -30,11 +32,11 @@ const Login = () => {
   })
 
   useEffect(() => {
-    const phone = sessionStorage.getItem("phone_number");
+    const phone = sessionStorage.getItem("email_or_phone");
     const token = sessionStorage.getItem("accessToken");
 
     if (phone || token) {
-      sessionStorage.removeItem("phone_number");
+      sessionStorage.removeItem("email_or_phone");
       sessionStorage.removeItem("accessToken");
     }
   }, []);
@@ -98,7 +100,6 @@ const Login = () => {
       return;
     }
 
-
     try {
       setLoading(true)
 
@@ -116,7 +117,7 @@ const Login = () => {
       });
 
       if (response.data.error_code === 200) {
-        sessionStorage.setItem("phone_number", `+91${loginInputs.phoneNumber}`)
+        sessionStorage.setItem("email_or_phone", `+91${loginInputs.phoneNumber}`)
         sessionStorage.setItem("accessToken", response.data.data.token)
         sessionStorage.setItem("session_token", response.data.data.session_token)
         setTimeout(() => {
@@ -140,9 +141,38 @@ const Login = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoadingAction("googleSignIn")
+
+      window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
+      // window.location.href = 'http://10.10.1.101:5000/oauth'
+
+      return
+
+      const response = await axios.get('http://10.10.1.101:5000/oauth');
+      if (response.data.error_code === 200) {
+        console.log(response.data)
+        toast.success(response.data.message);
+      } else if (response.data.error_code === 409) {
+        console.log(response.data)
+        toast.warn(response.data.message);
+      } else {
+        console.log(response.data)
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
+  };
+
 
   return (
-    <section className='layout' style={{ height: '100dvh'}}>
+    <section className='layout' style={{ height: '100dvh' }}>
       <Header />
       <div className="left-purple-ball">
       </div>
@@ -156,12 +186,11 @@ const Login = () => {
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
           <Row className="login-container align-items-center  px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
             <Col className='my-4 '>
-              <h3 className='mb-5 text-center login-register-text'>Log In</h3>
+              <h3 className='mb-5 text-center page-heading-text'>Log In</h3>
 
               <div className="mb-4">
                 <CustomInput
                   inputLabel="Phone number"
-                  autoFocus={true}
                   type="number"
                   id="phoneNumber"
                   name="phoneNumber"
@@ -203,10 +232,56 @@ const Login = () => {
               </p>
 
               <CustomButton
-                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Login"}
+                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Log in"}
                 className={`btn custom-button mt-5 mx-auto d-block w-100 cup ${loading && 'pe-none opacity-50'}`}
                 onClick={handleLogin}
               />
+
+              <div className="or-divider mt-4 mb-4 d-flex align-items-center">
+                <hr className="flex-grow-1" />
+                <span className="px-2">OR</span>
+                <hr className="flex-grow-1" />
+              </div>
+
+              {/* <CustomButton
+                buttonName={
+                  loadingAction === "googleSignIn" ? <CustomSpinner variant="light" size="sm" />
+                    :
+                    <div className='d-flex align-items-center'>
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
+                        alt="google-logo"
+                        width={20}
+                        height={20}
+                      />
+                      <span className="google-text ms-2 fs-14 ">Sign in with Google</span>
+                    </div>
+                }
+                className="btn custom-button mt-3 mx-auto d-block w-100 cup d-flex align-items-center justify-content-center"
+                onClick={handleGoogleSignIn}
+              /> */}
+
+
+              <div className="google-signin-btn" onClick={handleGoogleSignIn}>
+                <button className="google-btn w-100">
+                  {
+                    loadingAction === "googleSignIn" ? <CustomSpinner variant="dark" size="sm" />
+                      :
+                      <>
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
+                          alt="google-logo"
+                          width={20}
+                          height={20}
+                        />
+                        <span className="google-text ms-2">Sign in with Google</span>
+                      </>
+                  }
+
+                </button>
+              </div>
+
+
               <p className='mt-5 mb-0 text-center register-login-option-text fs-14'>
                 Don't have an account? &nbsp;
                 <Link to="/register" className='signup-login-navigation-link'>Register</Link>

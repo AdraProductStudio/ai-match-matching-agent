@@ -35,8 +35,6 @@ const ResetPassword = () => {
         confirmPasswordError: false
     })
 
-
-
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -83,7 +81,7 @@ const ResetPassword = () => {
         if (emailFromToken) {
             sessionStorage.setItem("forgot_password_email", emailFromToken);
             sessionStorage.setItem("reset_password_token", token);
-            setEmail(emailFromToken); // Update state for input
+            setEmail(emailFromToken);
         }
 
         const baseUrl = window.location.origin + window.location.pathname;
@@ -106,7 +104,6 @@ const ResetPassword = () => {
         }
     }
 
-
     const handleResetInputs = (e) => {
         const { name, value } = e.target
         const maxLengths = {
@@ -114,9 +111,17 @@ const ResetPassword = () => {
         };
         if (maxLengths[name] && value.length > maxLengths[name]) return;
 
-        setResetInputs((prevState) => (
-            { ...prevState, [name]: value }
-        ))
+        const updatedInputs = {
+            ...resetInputs,
+            [name]: value
+        }
+
+        if ((name === "password" || name === "confirmPassword") && updatedInputs.password === updatedInputs.confirmPassword) {
+            setError((prev) => ({ ...prev, confirmPasswordError: false }));
+            setErrorMessage((prev) => ({ ...prev, confirmPasswordErrorMessage: "" }));
+        }
+
+        setResetInputs(updatedInputs)
 
         if (value.trim() !== "") {
             setError((prevState) => (
@@ -191,7 +196,8 @@ const ResetPassword = () => {
             const response = await axiosInstance.post('/reset_password', payload);
             if (response.data.error_code === 200) {
                 setLoading(false)
-
+                sessionStorage.removeItem("reset_password_token")
+                sessionStorage.removeItem("forgot_password_email")
                 navigate("/");
                 toast.success(response.data.message);
             } else {
@@ -257,7 +263,7 @@ const ResetPassword = () => {
                 <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
                     <Row className="reset-password-container align-items-center   px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
                         <Col className='pt-3'>
-                            <h3 className='mb-5 text-center login-register-text'>Reset Password</h3>
+                            <h3 className='mb-5 text-center page-heading-text'>Reset Password</h3>
 
                             <div className="row">
                                 <div className="mb-3">
@@ -273,7 +279,6 @@ const ResetPassword = () => {
 
                                 <div className="mb-3 " ref={inputRef}>
                                     <CustomInputGroup
-                                        autoFocus={true}
                                         inputLabel="Password"
                                         type={showPassword ? "text" : "password"}
                                         id="password"
@@ -351,7 +356,7 @@ const ResetPassword = () => {
                             />
                             <p className='mt-5  mb-0 text-center register-login-option-text fs-14'>
                                 Back to &nbsp;
-                                <Link to="/" className='signup-login-navigation-link'>Login</Link>
+                                <Link to="/" className='signup-login-navigation-link'>Log in</Link>
                             </p>
                         </Col>
                     </Row>

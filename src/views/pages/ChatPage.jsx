@@ -26,7 +26,6 @@ const ChatPage = () => {
     const [isMobileScreen, setIsMobileScreen] = useState(window.innerWidth < 576);
 
 
-
     useEffect(() => {
         if (sessionStorage.getItem("is_logged_in") === null) {
             sessionStorage.setItem("is_logged_in", "true");
@@ -39,15 +38,16 @@ const ChatPage = () => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+
+
     useEffect(() => {
         const handleBeforeUnload = async (event) => {
             let payload;
             payload = {
                 "msg": "",
                 "flag": "close",
-                "phone_number": sessionStorage.getItem("phone_number")
+                "email_or_phone": sessionStorage.getItem("email_or_phone")
             }
-
             const response = await axiosInstance.post("/chatbot_widget", payload);
         };
 
@@ -57,11 +57,6 @@ const ChatPage = () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, []);
-
-
-
-
-
 
     useEffect(() => {
         if (scrollViewRef.current) {
@@ -112,7 +107,7 @@ const ChatPage = () => {
             const payload = {
                 msg: text.trim(),
                 flag: flag,
-                phone_number: sessionStorage.getItem("phone_number"),
+                email_or_phone: sessionStorage.getItem("email_or_phone"),
                 session_token: sessionStorage.getItem("session_token")
             };
 
@@ -139,7 +134,6 @@ const ChatPage = () => {
             }
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
-
 
             const data = response?.data;
             const responseMessage = data?.data?.message;
@@ -198,6 +192,7 @@ const ChatPage = () => {
             else if (data?.error_code === 409) {
                 handleSessionClose("close")
                 setIsCurrentConversationClosed(true)
+                // setMessages(prev => prev.slice(0, -1));
             }
             else {
                 updateBotMessage({ text: data?.data?.message || "Unexpected error occurred.", user: false, time: currentTime(new Date()) });
@@ -276,7 +271,7 @@ const ChatPage = () => {
             payload = {
                 "msg": "",
                 "flag": flag,
-                "phone_number": sessionStorage.getItem("phone_number"),
+                "email_or_phone": sessionStorage.getItem("email_or_phone"),
                 session_token: sessionStorage.getItem("session_token")
             }
 
@@ -312,7 +307,7 @@ const ChatPage = () => {
                 navigate("/");
                 sessionStorage.removeItem("accessToken");
                 sessionStorage.removeItem("session_token");
-                sessionStorage.removeItem("phone_number");
+                sessionStorage.removeItem("email_or_phone");
                 sessionStorage.removeItem("is_logged_in");
             } else {
                 setLogoutLoading(false);
@@ -727,9 +722,6 @@ const ChatPage = () => {
                         </Modal>
 
                     </section >
-
-
-
 
             }
         </>
