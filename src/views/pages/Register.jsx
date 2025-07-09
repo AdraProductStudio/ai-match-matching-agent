@@ -49,6 +49,8 @@ const Register = () => {
     confirmPasswordError: false
   })
   const [loading, setLoading] = useState(false)
+  const [loadingAction, setLoadingAction] = useState("")
+
 
 
 
@@ -91,7 +93,8 @@ const Register = () => {
   }
 
   const handleSignupInputs = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
+
     const maxLengths = {
       phoneNumber: 10
     };
@@ -99,24 +102,38 @@ const Register = () => {
 
     if (name === "email") {
       if (value !== verifiedEmail) {
-        setEmailVerified(false)
+        setEmailVerified(false);
       }
     }
 
-    setSignupInputs((prevState) => (
-      { ...prevState, [name]: value }
-    ))
+    const updatedInputs = {
+      ...signupInputs,
+      [name]: value
+    };
+
+    if (
+      (name === "password" || name === "confirmPassword") &&
+      updatedInputs.password === updatedInputs.confirmPassword
+    ) {
+      setError((prev) => ({ ...prev, confirmPasswordError: false }));
+      setErrorMessage((prev) => ({ ...prev, confirmPasswordErrorMessage: "" }));
+    }
+
+    setSignupInputs(updatedInputs);
 
     if (value.trim() !== "") {
-      setError((prevState) => (
-        { ...prevState, [`${name}Error`]: false }
-      ));
+      setError((prevState) => ({
+        ...prevState,
+        [`${name}Error`]: false
+      }));
 
-      setErrorMessage((prevState) => (
-        { ...prevState, [`${name}ErrorMessage`]: "" }
-      ));
+      setErrorMessage((prevState) => ({
+        ...prevState,
+        [`${name}ErrorMessage`]: ""
+      }));
     }
-  }
+  };
+
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -340,6 +357,19 @@ const Register = () => {
   }
 
 
+  const handleGoogleSignUp = async () => {
+    try {
+      setLoadingAction("googleSignUp")
+      window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
+    } catch (error) {
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
+  };
+
 
   return (
     <section className='layout'>
@@ -354,14 +384,13 @@ const Register = () => {
       </div>
       <Container className='main-section' fluid >
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
-          <Row className="signup-container align-items-center px-3 px-md-5 py-3 rounded-3 col-12 col-md-8 col-lg-8 col-xl-8 " >
+          <Row className="signup-container align-items-center px-3 px-md-5 py-3 rounded-3 col-12 col-md-8 col-lg-8 col-xl-7 " >
             <Col className='my-4 '>
-              <h3 className='mb-5 text-center login-register-text'>Register</h3>
+              <h3 className='mb-5 text-center page-heading-text'>Register</h3>
               <div className="row">
                 <div className="mb-3 col-12 col-xl-6">
                   <CustomInput
                     inputLabel="First name"
-                    autoFocus={true}
                     type="text"
                     id="firstName"
                     name="firstName"
@@ -518,12 +547,58 @@ const Register = () => {
 
               <CustomButton
                 buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Register"}
-                className="btn custom-button mt-5  mx-auto d-block w-100 "
+                className="btn custom-button mt-4 mx-auto d-block w-100 "
                 onClick={handleSignup}
               />
+
+
+              <div className="or-divider mt-4 mb-4 d-flex align-items-center">
+                <hr className="flex-grow-1" />
+                <span className="px-2">OR</span>
+                <hr className="flex-grow-1" />
+              </div>
+
+              {/* <CustomButton
+                buttonName={
+                  loadingAction === "googleSignUp" ? <CustomSpinner variant="light" size="sm" />
+                    :
+                    <div className='d-flex align-items-center'>
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
+                        alt="google-logo"
+                        width={20}
+                        height={20}
+                      />
+                      <span className="google-text ms-2 fs-14 ">Sign up with Google</span>
+                    </div>
+                }
+                className="btn custom-button mt-3 mx-auto d-block w-100 cup d-flex align-items-center justify-content-center"
+                onClick={handleGoogleSignUp}
+              /> */}
+
+              <div className="google-signin-btn" onClick={handleGoogleSignUp}>
+                <button className="google-btn w-100">
+                  {
+                    loadingAction === "googleSignUp" ? <CustomSpinner variant="dark" size="sm" />
+                      :
+                      <>
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
+                          alt="google-logo"
+                          width={20}
+                          height={20}
+                        />
+                        <span className="google-text ms-2">Sign up with Google</span>
+                      </>
+                  }
+
+                </button>
+              </div>
+
+
               <p className='mt-5 mb-0 text-center register-login-option-text fs-14'>
                 Already have an account? &nbsp;
-                <Link to="/" className='signup-login-navigation-link'>Login</Link>
+                <Link to="/" className='signup-login-navigation-link'>Log in</Link>
               </p>
             </Col>
           </Row>

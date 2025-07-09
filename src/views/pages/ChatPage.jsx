@@ -26,7 +26,6 @@ const ChatPage = () => {
     const [isMobileScreen, setIsMobileScreen] = useState(window.innerWidth < 576);
 
 
-
     useEffect(() => {
         if (sessionStorage.getItem("is_logged_in") === null) {
             sessionStorage.setItem("is_logged_in", "true");
@@ -39,6 +38,8 @@ const ChatPage = () => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+
+
     useEffect(() => {
         const handleBeforeUnload = async (event) => {
             let payload;
@@ -47,7 +48,6 @@ const ChatPage = () => {
                 "flag": "close",
                 "phone_number": sessionStorage.getItem("phone_number")
             }
-
             const response = await axiosInstance.post("/chatbot_widget", payload);
         };
 
@@ -57,11 +57,6 @@ const ChatPage = () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, []);
-
-
-
-
-
 
     useEffect(() => {
         if (scrollViewRef.current) {
@@ -140,7 +135,6 @@ const ChatPage = () => {
 
             const response = await axiosInstance.post("/chatbot_widget", payload);
 
-
             const data = response?.data;
             const responseMessage = data?.data?.message;
             const isEmptyData = data?.error_code === 200 && Object.keys(data?.data || {}).length === 0;
@@ -198,6 +192,7 @@ const ChatPage = () => {
             else if (data?.error_code === 409) {
                 handleSessionClose("close")
                 setIsCurrentConversationClosed(true)
+                // setMessages(prev => prev.slice(0, -1));
             }
             else {
                 updateBotMessage({ text: data?.data?.message || "Unexpected error occurred.", user: false, time: currentTime(new Date()) });
@@ -316,7 +311,6 @@ const ChatPage = () => {
                 sessionStorage.removeItem("is_logged_in");
             } else {
                 setLogoutLoading(false);
-                console.log(response.data.message);
             }
         } catch (error) {
             setLogoutLoading(false);
@@ -727,9 +721,6 @@ const ChatPage = () => {
                         </Modal>
 
                     </section >
-
-
-
 
             }
         </>

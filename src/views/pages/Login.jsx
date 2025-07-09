@@ -11,13 +11,12 @@ import CustomSpinner from '../../reusable-components/CustomSpinner'
 import axios from 'axios'
 
 
-
-
 const Login = () => {
 
   const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false)
+  const [loadingAction, setLoadingAction] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loginInputs, setLoginInputs] = useState({})
   const [errorMessage, setErrorMessage] = useState({
@@ -98,7 +97,6 @@ const Login = () => {
       return;
     }
 
-
     try {
       setLoading(true)
 
@@ -140,9 +138,22 @@ const Login = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoadingAction("googleSignIn")
+      window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
+    } catch (error) {
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
+  };
+
 
   return (
-    <section className='layout' style={{ height: '100dvh'}}>
+    <section className='layout' style={{ height: '100dvh' }}>
       <Header />
       <div className="left-purple-ball">
       </div>
@@ -156,12 +167,11 @@ const Login = () => {
         <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
           <Row className="login-container align-items-center  px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
             <Col className='my-4 '>
-              <h3 className='mb-5 text-center login-register-text'>Log In</h3>
+              <h3 className='mb-5 text-center page-heading-text'>Log In</h3>
 
               <div className="mb-4">
                 <CustomInput
                   inputLabel="Phone number"
-                  autoFocus={true}
                   type="number"
                   id="phoneNumber"
                   name="phoneNumber"
@@ -203,10 +213,37 @@ const Login = () => {
               </p>
 
               <CustomButton
-                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Login"}
+                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Log in"}
                 className={`btn custom-button mt-5 mx-auto d-block w-100 cup ${loading && 'pe-none opacity-50'}`}
                 onClick={handleLogin}
               />
+
+              <div className="or-divider mt-4 mb-4 d-flex align-items-center">
+                <hr className="flex-grow-1" />
+                <span className="px-2">OR</span>
+                <hr className="flex-grow-1" />
+              </div>
+
+              <div className="google-signin-btn" onClick={handleGoogleSignIn}>
+                <button className="google-btn w-100">
+                  {
+                    loadingAction === "googleSignIn" ? <CustomSpinner variant="dark" size="sm" />
+                      :
+                      <>
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
+                          alt="google-logo"
+                          width={20}
+                          height={20}
+                        />
+                        <span className="google-text ms-2">Sign in with Google</span>
+                      </>
+                  }
+
+                </button>
+              </div>
+
+
               <p className='mt-5 mb-0 text-center register-login-option-text fs-14'>
                 Don't have an account? &nbsp;
                 <Link to="/register" className='signup-login-navigation-link'>Register</Link>

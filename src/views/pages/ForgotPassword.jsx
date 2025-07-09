@@ -98,12 +98,11 @@ const ForgotPassword = () => {
                 <Container className='d-flex flex-column justify-content-center align-items-center h-100' >
                     <Row className="forgot-password-container align-items-center  px-3 px-md-5 py-3  rounded-3 col-12 col-md-8 col-lg-6 col-xl-5 " >
                         <Col className='my-5 '>
-                            <h3 className='mb-5 text-center login-register-text'>Forgot Password</h3>
+                            <h3 className='mb-5 text-center page-heading-text'>Forgot Password</h3>
 
                             <div className="mb-3">
                                 <CustomInput
                                     inputLabel="Email"
-                                    autoFocus={true}
                                     type="email"
                                     id="email"
                                     name="email"
@@ -126,7 +125,7 @@ const ForgotPassword = () => {
                             />
                             <p className='mt-5 mb-0 text-center register-login-option-text fs-14'>
                                 Back to &nbsp;
-                                <Link to="/" className='signup-login-navigation-link'>Login</Link>
+                                <Link to="/" className='signup-login-navigation-link'>Log in</Link>
                             </p>
                         </Col>
                     </Row>

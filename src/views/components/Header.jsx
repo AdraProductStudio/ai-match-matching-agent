@@ -45,11 +45,11 @@ const Header = ({ currentPage }) => {
                 sessionStorage.removeItem("session_token")
                 sessionStorage.removeItem("phone_number")
                 sessionStorage.removeItem("is_logged_in");
+                sessionStorage.removeItem("email_id");
                 setLogoutLoading(false)
                 navigate("/");
             } else {
                 setLogoutLoading(false)
-                console.log(response.data.message)
             }
         } catch (error) {
             setLogoutLoading(false)
@@ -65,7 +65,6 @@ const Header = ({ currentPage }) => {
                 "flag": "close",
                 "phone_number": sessionStorage.getItem("phone_number")
             }
-
             const response = await axiosInstance.post("/chatbot_widget", payload);
             if (response.data.error_code === 200) {
                 sessionStorage.removeItem("accessToken")
