@@ -14,12 +14,16 @@ export const handleVerifyPhoneAPI = (params, navigate) => async (dispatch) => {
             "email": sessionStorage.getItem("email_id")
         }
 
-        // const response = await axiosInstance.post('/send-otp', payload)
         const response = await axiosInstance.post('/continue-with-mobile', payload)
-        sessionStorage.setItem("phone_number", `+91${params}`)
-        // sessionStorage.setItem("email_id", response.data.email_id)
-        dispatch(handleVerifyPhone({ type: 'response', data: response.data }))
-        navigate('/chat')
+        console.log("response.data", response.data)
+        if (response.data.error_code === 200) {
+            dispatch(handleVerifyPhone({ type: 'response', data: response.data }))
+            sessionStorage.setItem("phone_number", response.data.data.phone_number)
+            sessionStorage.setItem("accessToken", response.data.data.token)
+            sessionStorage.setItem("session_token", response.data.data.session_token)
+            navigate('/chat')
+        }
+
     } catch (error) {
         dispatch(handleVerifyPhone({ type: 'error' }))
     }

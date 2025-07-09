@@ -27,7 +27,7 @@ function App() {
           <Route index path='/' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/continue-with-mobile' element={<VerifyPhone />} />
-          <Route path='/verify-otp' element={<OTPVerification />} />
+          {/* <Route path='/verify-otp' element={<OTPVerification />} /> */}
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/reset-password' element={<ResetPassword />} />
           <Route element={<ProtectedRoute />}>

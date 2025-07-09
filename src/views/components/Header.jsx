@@ -45,6 +45,7 @@ const Header = ({ currentPage }) => {
                 sessionStorage.removeItem("session_token")
                 sessionStorage.removeItem("phone_number")
                 sessionStorage.removeItem("is_logged_in");
+                sessionStorage.removeItem("email_id");
                 setLogoutLoading(false)
                 navigate("/");
             } else {
