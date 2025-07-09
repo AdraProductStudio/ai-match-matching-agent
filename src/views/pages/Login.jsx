@@ -145,7 +145,8 @@ const Login = () => {
     try {
       setLoadingAction("googleSignIn")
 
-      window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
+      window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
+      // window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
       // window.location.href = 'http://10.10.1.101:5000/oauth'
 
       return
