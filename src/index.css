@@ -247,7 +247,15 @@ input[type="number"] {
   text-decoration: none;
 }
 
-.register-email-field .verify-icon {
+.register-email-field .verify-icon
+{
+  position: absolute;
+  top: 55%;
+  right: 3%;
+}
+
+.forgot-password-email-field .verify-icon
+{
   position: absolute;
   top: 55%;
   right: 3%;

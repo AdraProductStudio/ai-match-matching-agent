@@ -32,11 +32,11 @@ const Login = () => {
   })
 
   useEffect(() => {
-    const phone = sessionStorage.getItem("email_or_phone");
+    const phone = sessionStorage.getItem("phone_number");
     const token = sessionStorage.getItem("accessToken");
 
     if (phone || token) {
-      sessionStorage.removeItem("email_or_phone");
+      sessionStorage.removeItem("phone_number");
       sessionStorage.removeItem("accessToken");
     }
   }, []);
@@ -117,7 +117,7 @@ const Login = () => {
       });
 
       if (response.data.error_code === 200) {
-        sessionStorage.setItem("email_or_phone", `+91${loginInputs.phoneNumber}`)
+        sessionStorage.setItem("phone_number", `+91${loginInputs.phoneNumber}`)
         sessionStorage.setItem("accessToken", response.data.data.token)
         sessionStorage.setItem("session_token", response.data.data.session_token)
         setTimeout(() => {

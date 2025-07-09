@@ -16,20 +16,21 @@ const commonSlice = createSlice({
             state[name] = value
         },
         handleVerifyPhone(state, action) {
+
             let type = action.payload
             switch (type) {
                 case 'request':
                     state.loading = true
+                    break;
                 case 'response':
                     state.loading = false
-
+                    break;
                 case 'error':
                     state.loading = false
+                    break;
             }
         },
         handleErrors(state, action) {
-            console.log("action.payload", action.payload)
-            // state.error = action.payload
             state.error = {
                 ...state.error,
                 ...action.payload

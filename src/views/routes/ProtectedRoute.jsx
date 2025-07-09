@@ -25,10 +25,6 @@ const authUserFromOauth = () => {
   const sessionTokenFromToken = payload.session_token;
   const accessTokenFromToken = payload.access_token;
 
-  console.log("emailFromToken", emailFromToken)
-  console.log("sessionTokenFromToken", sessionTokenFromToken)
-  console.log("accessTokenFromToken", accessTokenFromToken)
-
   if (accessTokenFromToken && sessionTokenFromToken && emailFromToken) {
     var uri = window.location.toString();
     if (uri.indexOf("?") > 0) {
@@ -39,7 +35,7 @@ const authUserFromOauth = () => {
     if (accessTokenFromToken && sessionTokenFromToken && emailFromToken) {
       sessionStorage.setItem("accessToken", accessTokenFromToken)
       sessionStorage.setItem("session_token", sessionTokenFromToken)
-      sessionStorage.setItem("email_or_phone", emailFromToken)
+      sessionStorage.setItem("phone_number", emailFromToken)
 
       return true;
     }

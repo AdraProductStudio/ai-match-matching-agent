@@ -44,7 +44,6 @@ const VerifyPhone = () => {
         }
 
         const emailFromToken = payload.sub;
-        console.log("emailFromToken", emailFromToken)
 
         if (emailFromToken) {
             sessionStorage.setItem("email_id", emailFromToken);
@@ -69,6 +68,7 @@ const VerifyPhone = () => {
             return;
         }
         setPhoneError("");
+        
         dispatch(handleVerifyPhoneAPI(verifyPhone, navigate))
     };
 
@@ -129,7 +129,7 @@ const VerifyPhone = () => {
                                 }
                             </div>
                             <CustomButton
-                                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Send OTP"}
+                                buttonName={loading ? <CustomSpinner variant="light" size="sm" /> : "Continue"}
                                 className={`btn custom-button mt-5 mx-auto d-block w-100 cup ${loading && 'pe-none opacity-50'}`}
                                 onClick={() => handleSendOTP()}
                             />

@@ -73,8 +73,6 @@ const Register = () => {
   }, []);
 
 
-  console.log(signupInputs)
-
   useEffect(() => {
     const result = strongPasswords(3, 12, 16);
     setSuggestedPasswords(result);
@@ -301,7 +299,7 @@ const Register = () => {
         "lastname": signupInputs?.lastName?.trim(),
         "email": signupInputs?.email?.trim(),
         "password": sha256(signupInputs?.password?.trim()),
-        "email_or_phone": `+91${signupInputs?.phoneNumber?.trim()}`,
+        "phone_number": `+91${signupInputs?.phoneNumber?.trim()}`,
         "allowed_domain": import.meta.env.VITE_DOMAIN
       };
 

@@ -46,7 +46,7 @@ const ChatPage = () => {
             payload = {
                 "msg": "",
                 "flag": "close",
-                "email_or_phone": sessionStorage.getItem("email_or_phone")
+                "phone_number": sessionStorage.getItem("phone_number")
             }
             const response = await axiosInstance.post("/chatbot_widget", payload);
         };
@@ -107,7 +107,7 @@ const ChatPage = () => {
             const payload = {
                 msg: text.trim(),
                 flag: flag,
-                email_or_phone: sessionStorage.getItem("email_or_phone"),
+                phone_number: sessionStorage.getItem("phone_number"),
                 session_token: sessionStorage.getItem("session_token")
             };
 
@@ -271,7 +271,7 @@ const ChatPage = () => {
             payload = {
                 "msg": "",
                 "flag": flag,
-                "email_or_phone": sessionStorage.getItem("email_or_phone"),
+                "phone_number": sessionStorage.getItem("phone_number"),
                 session_token: sessionStorage.getItem("session_token")
             }
 
@@ -307,11 +307,10 @@ const ChatPage = () => {
                 navigate("/");
                 sessionStorage.removeItem("accessToken");
                 sessionStorage.removeItem("session_token");
-                sessionStorage.removeItem("email_or_phone");
+                sessionStorage.removeItem("phone_number");
                 sessionStorage.removeItem("is_logged_in");
             } else {
                 setLogoutLoading(false);
-                console.log(response.data.message);
             }
         } catch (error) {
             setLogoutLoading(false);

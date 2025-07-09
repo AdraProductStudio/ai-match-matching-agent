@@ -60,16 +60,13 @@ const OTPVerification = () => {
         // }
         try {
             setLoading(true)
-
             const payload = {
-                "phone_number": sessionStorage.getItem("email_or_phone"),
+                "phone_number": sessionStorage.getItem("phone_number"),
                 "otp": enteredOtp,
                 "email": sessionStorage.getItem("email_id")
             }
-            console.log("payload", payload)
             const response = await axiosInstance.post('/verify-otp', payload)
             setLoading(false)
-            console.log("response.data", response.data)
             navigate('/')
         } catch (error) {
             setLoading(false)
