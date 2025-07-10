@@ -357,63 +357,12 @@ const Register = () => {
   }
 
 
-  const handleAuth = async () => {
-    try {
-
-      window.location.href = 'https://wondrous-briefly-sunfish.ngrok-free.app/oauth'
-      // window.location.href = 'http://10.10.1.101:5000/oauth'
-
-      return
-
-      const response = await axios.get('http://10.10.1.101:5000/oauth');
-      if (response.data.error_code === 200) {
-        console.log(response.data)
-        toast.success(response.data.message);
-      } else if (response.data.error_code === 409) {
-        console.log(response.data)
-        toast.warn(response.data.message);
-      } else {
-        console.log(response.data)
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-    }
-  };
-
   const handleGoogleSignUp = async () => {
-    try {
-      setLoadingAction("googleSignUp")
-
-      window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
-      // window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
-      // window.location.href = 'https://wondrous-briefly-sunfish.ngrok-free.app/oauth'
-      // window.location.href = 'http://10.10.1.101:5000/oauth'
-
-      return
-
-      const response = await axios.get('http://10.10.1.101:5000/oauth');
-      if (response.data.error_code === 200) {
-        console.log(response.data)
-        toast.success(response.data.message);
-      } else if (response.data.error_code === 409) {
-        console.log(response.data)
-        toast.warn(response.data.message);
-      } else {
-        console.log(response.data)
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-    }
+    setLoadingAction("googleSignUp")
+    // window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
+    // return
+    window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
+    setLoadingAction("")
   };
 
 

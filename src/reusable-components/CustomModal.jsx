@@ -9,7 +9,8 @@ const CustomModal = ({
     isModalCentered,
     modalBackdropType,
     className,
-    modalFooter
+    modalFooter,
+    keyboard
 
 }) => {
 
@@ -22,6 +23,7 @@ const CustomModal = ({
                 centered={isModalCentered}
                 backdrop={modalBackdropType}
                 className={className}
+                keyboard={keyboard}
             >
                 <Modal.Header closeButton>
                     <Modal.Title>{modalHeader}</Modal.Title>

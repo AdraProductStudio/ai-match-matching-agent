@@ -489,6 +489,7 @@ const ChatPage = () => {
                             aria-labelledby="contained-modal-title-vcenter"
                             centered
                             backdrop="static"
+                            keyboard={false}
                         >
                             <Modal.Body >
                                 <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Session closed</h3>
@@ -644,6 +645,7 @@ const ChatPage = () => {
                             aria-labelledby="contained-modal-title-vcenter"
                             centered
                             backdrop="static"
+                            keyboard={false}
                         >
                             <Modal.Body >
                                 <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Inactive Session Notice</h3>
@@ -693,23 +695,7 @@ const ChatPage = () => {
                             aria-labelledby="contained-modal-title-vcenter"
                             centered
                             backdrop="static"
-                        >
-                            <Modal.Body >
-                                <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Session closed</h3>
-                                <p className='px-2 text-center' style={{ fontWeight: '450', fontSize: '16px' }}>
-                                    A new session has been started, so this one has been closed. Please continue in your latest chat window.
-                                </p>
-
-                            </Modal.Body>
-                        </Modal>
-
-                        <Modal
-                            show={isCurrentConversationClosed}
-                            onHide={() => setIsCurrentConversationClosed(false)}
-                            size="md"
-                            aria-labelledby="contained-modal-title-vcenter"
-                            centered
-                            backdrop="static"
+                            keyboard={false}
                         >
                             <Modal.Body >
                                 <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Session closed</h3>

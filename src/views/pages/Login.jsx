@@ -9,9 +9,6 @@ import { toast } from 'react-toastify'
 import sha256 from 'sha256';
 import CustomSpinner from '../../reusable-components/CustomSpinner'
 import axios from 'axios'
-import axiosInstance from '../../services/axiosInstance'
-
-
 
 
 const Login = () => {
@@ -142,33 +139,11 @@ const Login = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    try {
-      setLoadingAction("googleSignIn")
-
-      window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
-      // window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
-      // window.location.href = 'http://10.10.1.101:5000/oauth'
-
-      return
-
-      const response = await axios.get('http://10.10.1.101:5000/oauth');
-      if (response.data.error_code === 200) {
-        console.log(response.data)
-        toast.success(response.data.message);
-      } else if (response.data.error_code === 409) {
-        console.log(response.data)
-        toast.warn(response.data.message);
-      } else {
-        console.log(response.data)
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-    }
+    setLoadingAction("googleSignIn")
+    // window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
+    // return
+    window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
+    setLoadingAction("")
   };
 
 
@@ -243,25 +218,6 @@ const Login = () => {
                 <span className="px-2">OR</span>
                 <hr className="flex-grow-1" />
               </div>
-
-              {/* <CustomButton
-                buttonName={
-                  loadingAction === "googleSignIn" ? <CustomSpinner variant="light" size="sm" />
-                    :
-                    <div className='d-flex align-items-center'>
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
-                        alt="google-logo"
-                        width={20}
-                        height={20}
-                      />
-                      <span className="google-text ms-2 fs-14 ">Sign in with Google</span>
-                    </div>
-                }
-                className="btn custom-button mt-3 mx-auto d-block w-100 cup d-flex align-items-center justify-content-center"
-                onClick={handleGoogleSignIn}
-              /> */}
-
 
               <div className="google-signin-btn" onClick={handleGoogleSignIn}>
                 <button className="google-btn w-100">
