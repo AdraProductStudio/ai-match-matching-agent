@@ -59,24 +59,37 @@ const Header = ({ currentPage }) => {
 
     const handleLogoClick = async () => {
         try {
-            let payload;
-            payload = {
-                "msg": "",
-                "flag": "close",
-                "phone_number": sessionStorage.getItem("phone_number")
+            const phoneNumber = sessionStorage.getItem("phone_number");
+
+            if (!phoneNumber) {
+                navigate("/");
+                return;
             }
+
+            const payload = {
+                msg: "",
+                flag: "close",
+                phone_number: phoneNumber
+            };
+
             const response = await axiosInstance.post("/chatbot_widget", payload);
+
             if (response.data.error_code === 200) {
-                sessionStorage.removeItem("accessToken")
-                sessionStorage.removeItem("phone_number")
+                sessionStorage.removeItem("accessToken");
+                sessionStorage.removeItem("session_token");
+                sessionStorage.removeItem("phone_number");
+                sessionStorage.removeItem("is_logged_in");
+                sessionStorage.removeItem("email_id");
+
                 navigate("/");
             } else {
-                console.log(response.data.message)
+                console.log(response.data.message);
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
+
 
     return (
         <>

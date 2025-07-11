@@ -574,10 +574,10 @@ const Register = () => {
                       :
                       <>
                         <img
-                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
-                          alt="google-logo"
-                          width={20}
-                          height={20}
+                          src="https://developers.google.com/identity/images/g-logo.png"
+                          alt="Google logo"
+                          width="20"
+                          height="20"
                         />
                         <span className="google-text ms-2">Sign up with Google</span>
                       </>
