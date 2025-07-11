@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Col, Container, Row } from 'react-bootstrap'
+import { Col, Container, Modal, Row } from 'react-bootstrap'
 import Header from '../components/Header'
 import CustomInput from '../../reusable-components/CustomInput'
 import CustomButton from '../../reusable-components/CustomButton'
@@ -28,15 +28,39 @@ const Login = () => {
     passwordError: false,
   })
 
+
   useEffect(() => {
     const phone = sessionStorage.getItem("phone_number");
     const token = sessionStorage.getItem("accessToken");
+    const session_token = sessionStorage.getItem("session_token")
+    const is_logged_in = sessionStorage.getItem("is_logged_in");
+    const email_id = sessionStorage.getItem("email_id");
 
-    if (phone || token) {
+    if (phone || token || session_token || is_logged_in || email_id) {
       sessionStorage.removeItem("phone_number");
       sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("session_token")
+      sessionStorage.removeItem("is_logged_in");
+      sessionStorage.removeItem("email_id");
     }
   }, []);
+
+  useEffect(() => {
+    getIsManuallyRegisteredEmail();
+  }, []);
+
+  const getIsManuallyRegisteredEmail = () => {
+    const isManuallyRegisteredEmail = new URLSearchParams(window.location.search).get('is_manually_registered_email');
+    if (!isManuallyRegisteredEmail) return;
+    const baseUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, baseUrl);
+    toast.error(
+      <>
+        This email is already registered <br />
+        with your Vibeon account. Google Sign-In is not available for this account.
+      </>
+    );
+  }
 
 
 
@@ -140,9 +164,14 @@ const Login = () => {
 
   const handleGoogleSignIn = async () => {
     setLoadingAction("googleSignIn")
-    // window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
+    // setTimeout(() => {
+    //   window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
+    // }, 1000);
     // return
-    window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
+
+    setTimeout(() => {
+      window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
+    }, 1000);
     setLoadingAction("")
   };
 

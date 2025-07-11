@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response && error.response.status_code === 401 || error.response.data.detail === "Token expired") {
+        if (error.response && error.response.status_code === 401 || error.response.data.status_code === 401 || error.response.data.detail === "Token expired") {
             originalRequest._retry = true;
             try {
                 const token = sessionStorage.getItem("accessToken");

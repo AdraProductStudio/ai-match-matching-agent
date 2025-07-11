@@ -359,9 +359,14 @@ const Register = () => {
 
   const handleGoogleSignUp = async () => {
     setLoadingAction("googleSignUp")
-    // window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
+    // setTimeout(() => {
+    //   window.location.href = 'https://finer-dodo-famous.ngrok-free.app/googlelogin'
+    // }, 1000);
     // return
-    window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
+
+    setTimeout(() => {
+      window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
+    }, 1000);
     setLoadingAction("")
   };
 
