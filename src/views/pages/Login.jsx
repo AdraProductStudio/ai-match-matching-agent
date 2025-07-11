@@ -163,10 +163,7 @@ const Login = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    setLoadingAction("googleSignIn")
-    setTimeout(() => {
-      window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
-    }, 100);
+    window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
   };
 
 
