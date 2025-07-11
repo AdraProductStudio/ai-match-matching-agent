@@ -358,16 +358,10 @@ const Register = () => {
 
 
   const handleGoogleSignUp = async () => {
-    try {
-      setLoadingAction("googleSignUp")
+    setLoadingAction("googleSignUp")
+    setTimeout(() => {
       window.location.href = `${import.meta.env.VITE_REACT_APP_API_URL}/googlelogin`
-    } catch (error) {
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-    }
+    }, 100);
   };
 
 

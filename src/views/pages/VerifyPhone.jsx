@@ -15,7 +15,6 @@ const VerifyPhone = () => {
 
     const {
         verifyPhone,
-        loading,
         error
     } = useSelector(state => state.commonReducer)
 
@@ -23,6 +22,8 @@ const VerifyPhone = () => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
+
 
     useEffect(() => {
         getEmailId();
@@ -51,7 +52,6 @@ const VerifyPhone = () => {
     }
 
 
-
     const handleSendOTP = async () => {
         let hasError = false;
         if (!verifyPhone.trim()) {
@@ -66,16 +66,23 @@ const VerifyPhone = () => {
             return;
         }
         setPhoneError("");
-        
-        dispatch(handleVerifyPhoneAPI(verifyPhone, navigate))
+        setLoading(true)
+        setTimeout(() => {
+            dispatch(handleVerifyPhoneAPI(verifyPhone, navigate))
+            setLoading(false)
+        }, 300);
+
     };
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
-            dispatch(handleVerifyPhoneAPI(verifyPhone, navigate))
+            setLoading(true)
+            setTimeout(() => {
+                dispatch(handleVerifyPhoneAPI(verifyPhone, navigate))
+                setLoading(false)
+            }, 300);
         }
     };
-
 
     return (
         <section className='layout' style={{ height: '100dvh' }}>
@@ -97,24 +104,25 @@ const VerifyPhone = () => {
                             <div className="mb-3">
                                 <CustomInput
                                     inputLabel="Phone number"
-                                    type="number"
+                                    type="tel"
                                     id="verifyPhone"
                                     name="verifyPhone"
                                     placeholder="Enter your phone number"
                                     onChange={(e) => {
-                                        dispatch(handleVerifyPhoneInput({ name: e.target.name, value: e.target.value }))
-
-                                        if (error?.verifyPhoneError) {
-                                            // setPhoneError("");
-                                            dispatch(handleErrors({
-                                                verifyPhoneError: false,
-                                                verifyPhoneErrorMessage: ""
-                                            }))
+                                        const value = e.target.value;
+                                        if (/^\d{0,10}$/.test(value)) {
+                                            dispatch(handleVerifyPhoneInput({ name: e.target.name, value }));
+                                            if (error?.verifyPhoneError) {
+                                                dispatch(handleErrors({
+                                                    verifyPhoneError: false,
+                                                    verifyPhoneErrorMessage: ""
+                                                }));
+                                            }
                                         }
                                     }}
                                     value={verifyPhone || ""}
                                     className="mb-2"
-                                    onKeyDown={handleKeyDown}
+                                    keyDown={handleKeyDown}
                                     required
                                 />
                                 {/* {

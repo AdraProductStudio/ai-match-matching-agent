@@ -1,11 +1,10 @@
+import { toast } from "react-toastify"
 import axiosInstance from "../../services/axiosInstance"
 import { handleVerifyPhone } from "../slices/commonSlice"
 
 export const handleVerifyPhoneAPI = (params, navigate) => async (dispatch) => {
     try {
-
         dispatch(handleVerifyPhone({ type: 'request' }))
-
         const payload = {
             "phone_number": `+91${params}`,
             "email": sessionStorage.getItem("email_id")
@@ -18,6 +17,10 @@ export const handleVerifyPhoneAPI = (params, navigate) => async (dispatch) => {
             sessionStorage.setItem("accessToken", response.data.data.token)
             sessionStorage.setItem("session_token", response.data.data.session_token)
             navigate('/chat')
+        } else if (response.data.error_code === 409) {
+            toast.error(response.data.message)
+        } else {
+            toast.error(response.data.message)
         }
 
     } catch (error) {

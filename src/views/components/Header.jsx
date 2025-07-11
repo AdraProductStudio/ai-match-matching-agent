@@ -132,6 +132,7 @@ const Header = ({ currentPage }) => {
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
                 backdrop="static"
+                keyboard={false}
             >
                 <Modal.Body >
                     <h3 className='my-3 mb-4 text-center fw-bold' style={{ color: '#5b719b' }}>Log out</h3>
